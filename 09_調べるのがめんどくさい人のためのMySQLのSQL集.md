@@ -505,8 +505,7 @@ LEFT JOIN (
 
 ```sql
 -- ユーザーごとの権限一覧
-  SELECT DISTINCT 
-         grantee                      AS user
+  SELECT grantee                      AS user
        , is_grantable                 AS is_grantable   -- GRANT権限があるかどうか
        , GROUP_CONCAT(privilege_type) AS privileges
     FROM information_schema.user_privileges
