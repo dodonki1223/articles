@@ -185,6 +185,26 @@ ORDER BY table_schema
 |  hoge          |  hoge_fuga   |  hoge_id       |
 |  fuga          |  fuga_hoge   |  hoge_id       |
 
+## VIEWの一覧
+
+```sql
+-- VIEWの一覧
+  SELECT table_schema AS database_name
+       , table_name   AS view_name
+    FROM information_schema.tables
+   WHERE table_schema NOT IN ('mysql', 'perfomance_schema', 'information_schema')
+     AND table_type = 'VIEW'
+ORDER BY table_schema
+       , table_name
+;
+```
+
+|  database_name |  view_name |
+|:--------------:|:----------:|
+|  hoge          |  view_1    |
+|  hoge          |  view_2    |
+|  fuga          |  view_3    |
+
 ---
 
 # テーブルのキー情報確認用SQL
@@ -1010,6 +1030,24 @@ GROUP BY habitat
 |:---------:|:-------------------------:|
 |  地上     |  ゴリラ,キリン,マントヒヒ |
 |  水上     |  カバ,ワニ                |
+
+## VIEWの一括DROP文作成
+
+```sql
+  SELECT CONCAT('DROP VIEW ', table_name, ';') AS view_drop_sql  
+    FROM information_schema.tables
+   WHERE table_schema NOT IN ('mysql', 'perfomance_schema', 'information_schema')
+     AND table_type = 'VIEW'
+ORDER BY table_schema
+       , table_name
+;
+```
+
+|  view_drop_sql     |
+|:------------------:|
+|  DROP VIEW view_1; |
+|  DROP VIEW view_2; |
+|  DROP VIEW view_3; |
 
 ---
 
