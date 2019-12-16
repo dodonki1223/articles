@@ -16,3 +16,4 @@ Qiitaに投稿した記事を管理するリポジトリ
 |  8 | [ちょっとそこのあなた！ 自分だけのオリジナルLGTMをチームで使ってみませんか？](https://qiita.com/dodonki1223/items/946f0204ba37c7029ad7)                     | GASとブックマークレットで作るLGTM文言コピーツール | ３回目のQiitaでトレンド入りした記事                                     |
 |  9 | [調べるのがめんどくさい人のためのMySQLのSQL集](https://qiita.com/dodonki1223/items/776a3520e45626773c60)                                                    | MySQLで個人的に使ったSQL集（結構ガッツリ目）      |                                                                         |
 | 10 | [Rubyのgemを公開しつつCircleCIでCI:CI(継続的インティグレーション:継続的デリバリー)を体験する！！](https://qiita.com/dodonki1223/items/c94f5b185fd5fa815bb1) | RubyのGemを初めて制作しCI:CDもついでに行ったお話  | 一番気合を入れて書いた記事。ただあまり受けなかった悲しい記事            |
+| 11 | [無料で作成するサーバーレスな自分だけの最強家計簿](https://qiita.com/dodonki1223/items/3691506fb3eaf22d68d0)                                                | RubyのGemを初めて制作しCI:CDもついでに行ったお話  | Googleフォーム、Googleスプレッドシート、LINE BOTで管理する家計簿の記事  |
