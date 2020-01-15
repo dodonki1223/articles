@@ -1053,6 +1053,32 @@ ORDER BY table_schema
 
 # その他
 
+## データベースへのコネクション数を確認する
+
+詳しくは[公式のドキュメント](https://dev.mysql.com/doc/refman/5.6/ja/threads-table.html)を参照すること
+
+```sql
+  SELECT PROCESSLIST_HOST AS PROCESSLIST_HOST
+       , COUNT(*)         AS CONNECTION_COUNT
+    FROM performance_schema.threads
+   WHERE TYPE = 'FOREGROUND' 
+GROUP BY PROCESSLIST_HOST
+ORDER BY PROCESSLIST_HOST
+;
+```
+
+| PROCESSLIST_HOST | CONNECTION_COUNT |
+|:-----------------|-----------------:|
+|  999.999.999.999 |               10 |
+|  888.888.888.888 |                2 |
+|  777.777.777.777 |                3 |
+
+`INFORMATION_SCHEMA.PROCESSLIST` テーブルでも確認はできるが下記の理由より `performance_schema.threads` を使う方が良さそうです
+
+[公式ドキュメントより](https://dev.mysql.com/doc/refman/5.6/ja/threads-table.html)
+
+> threads へのアクセスには相互排他ロックは必要なく、サーバーパフォーマンスへの影響は最小です。INFORMATION_SCHEMA.PROCESSLIST と SHOW PROCESSLIST では相互排他ロックが必要になるため、パフォーマンスの低下につながります
+
 ## トランザクションを使用してデータを更新
 
 詳しくは[公式のドキュメント](https://dev.mysql.com/doc/refman/5.6/ja/commit.html)を参照すること
