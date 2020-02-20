@@ -1031,6 +1031,60 @@ GROUP BY habitat
 |  地上     |  ゴリラ,キリン,マントヒヒ |
 |  水上     |  カバ,ワニ                |
 
+## ランキングデータを作成
+
+`GROUP_CONCAT` と `SUBSTRING_INDEX` と `FIND_IN_SET` を使用することによりランキングを作成出来ます  
+`GROUP_CONCAT` と `SUBSTRING_INDEX` でTOP〇〇まで作成  
+`FIND_IN_SET` でTOP〇〇に含まれているデータを抽出
+
+```sql
+-- 10都市の人口データからTOP5を求める
+    SELECT population_info.*
+         , FIND_IN_SET(population_info.population, rank_info.rank) AS rank
+      FROM (
+                          SELECT '京都市'     AS city, 1475183 AS population
+                UNION ALL SELECT '川崎市'     AS city, 1475213 AS population
+                UNION ALL SELECT '横浜市'     AS city, 3724844 AS population
+                UNION ALL SELECT '名古屋市'   AS city, 2295638 AS population
+                UNION ALL SELECT '福岡市'     AS city, 1538681 AS population
+                UNION ALL SELECT '大阪市'     AS city, 2691185 AS population
+                UNION ALL SELECT '神戸市'     AS city, 1537272 AS population
+                UNION ALL SELECT '広島市'     AS city, 1194034 AS population
+                UNION ALL SELECT 'さいたま市' AS city, 1263979 AS population
+                UNION ALL SELECT '札幌市'     AS city, 1952356 AS population
+           ) AS population_info 
+CROSS JOIN (
+                SELECT SUBSTRING_INDEX(
+                                             GROUP_CONCAT(population ORDER BY population DESC)
+                                           , ','
+                                           , 5
+                                      ) AS rank
+                  FROM (
+                                      SELECT '京都市'     AS city, 1475183 AS population
+                            UNION ALL SELECT '川崎市'     AS city, 1475213 AS population
+                            UNION ALL SELECT '横浜市'     AS city, 3724844 AS population
+                            UNION ALL SELECT '名古屋市'   AS city, 2295638 AS population
+                            UNION ALL SELECT '福岡市'     AS city, 1538681 AS population
+                            UNION ALL SELECT '大阪市'     AS city, 2691185 AS population
+                            UNION ALL SELECT '神戸市'     AS city, 1537272 AS population
+                            UNION ALL SELECT '広島市'     AS city, 1194034 AS population
+                            UNION ALL SELECT 'さいたま市' AS city, 1263979 AS population
+                            UNION ALL SELECT '札幌市'     AS city, 1952356 AS population
+                       ) AS population_info 
+           ) AS rank_info
+     WHERE FIND_IN_SET(population_info.population, rank_info.rank)
+  ORDER BY FIND_IN_SET(population_info.population, rank_info.rank)
+;
+```
+
+|  city     | population | rank |
+|:---------:|-----------:|-----:|
+|  横浜市   | 3724844    | 1    |
+|  大阪市   | 2691185    | 2    |
+|  名古屋市 | 2295638    | 3    |
+|  札幌市   | 1952356    | 4    |
+|  福岡市   | 1538681    | 5    |
+
 ## VIEWの一括DROP文作成
 
 ```sql
