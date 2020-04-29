@@ -18,3 +18,4 @@ Qiitaに投稿した記事を管理するリポジトリ
 | 10 | [Rubyのgemを公開しつつCircleCIでCI:CI(継続的インティグレーション:継続的デリバリー)を体験する！！](https://qiita.com/dodonki1223/items/c94f5b185fd5fa815bb1) | RubyのGemを初めて制作しCI:CDもついでに行ったお話  | 一番気合を入れて書いた記事。ただあまり受けなかった悲しい記事             |
 | 11 | [無料で作成するサーバーレスな自分だけの最強家計簿](https://qiita.com/dodonki1223/items/3691506fb3eaf22d68d0)                                                | 自分用の最強会計簿ソフト                          | Googleフォーム、Googleスプレッドシート、LINE BOTで管理する家計簿の記事   |
 | 12 | [CI／CD環境も含めたRails6の開発環境が今すぐに欲しい……](https://qiita.com/dodonki1223/items/bf818da50c49080138ab)                                          | Rails6の開発環境用のテンプレートリポジトリ        | Rails6の開発環境をDocker、CircleCI、Heroku(自動デプロイ)を実現させる記事 |
+| 13 | [俺が使う最強のMac構築手順書](https://qiita.com/dodonki1223/items/2bb296111e561c93035e)                                                                     | 自分のMacの構築手順書                             |                                                                          |
