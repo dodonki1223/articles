@@ -34,7 +34,7 @@ MacOSの設定はめんどくさいのでコマンドだけで完結するよう
 | <img width="100" alt="karabiner-elements" src="https://beadored.com/wp-content/uploads/2017/02/Karabiner-Elements.jpg">                                                                                                  | Karabiner-Elements     | キーボードカスタマイズツール | [https://pqrs.org/osx/karabiner/](https://pqrs.org/osx/karabiner/)                                                                               |
 | <img width="100" alt="alfred"             src="https://www.alfredapp.com/media/logo4@2x.png">                                                                                                                            | Alfred                 | コマンドラインランチャー     | [https://www.alfredapp.com/](https://www.alfredapp.com/)                                                                                         |
 | <img width="100" alt="spectacle"          src="https://static.macupdate.com/products/41147/m/spectacle-logo.webp?v=1568311675">                                                                                          | Spectacle              | ウィンドウ操作ツール         | [https://www.spectacleapp.com/](https://www.spectacleapp.com/)                                                                                   |
-| <img width="100" alt="gitkraken"          src="https://www.gitkraken.com/img/glo/glo-git-gui.svg">                                                                                                                       | GitKraken              | Git CUI ツール               | [https://www.gitkraken.com/](https://www.gitkraken.com/)                                                                                         |
+| <img width="100" alt="gitkraken"          src="https://www.gitkraken.com/img/glo/glo-git-gui.svg">                                                                                                                       | GitKraken              | Git GUI ツール               | [https://www.gitkraken.com/](https://www.gitkraken.com/)                                                                                         |
 | <img width="100" alt="backup-and-sync"    src="https://www.concordcarlisle.org/cchstech/wp-content/uploads/sites/87/2017/11/Google-Backup-and-Sync.png">                                                                 | バックアップと同期     | Google ドライブ同期ツール    | [https://www.google.com/intl/ja_ALL/drive/download/backup-and-sync/](https://www.google.com/intl/ja_ALL/drive/download/backup-and-sync/)         |
 | <img width="100" alt="googlejapanese"     src="https://www.google.co.jp/ime/images/product-icon.png">                                                                                                                    | Google 日本語入力      | IME ソフト                   | [https://www.google.co.jp/ime/](https://www.google.co.jp/ime/)                                                                                   |
 | <img width="100" alt="xcode"              src="https://is1-ssl.mzstatic.com/image/thumb/Purple113/v4/8a/a7/f6/8aa7f6bf-d761-71b5-bc8b-66c831782e0d/Xcode-0-0-85-220-0-0-0-0-4-0-0-0-2x-sRGB-0-0-0-0-0.png/230x0w.png">   | Xcode                  | Apple 製品用開発ツール       | [https://apps.apple.com/jp/app/xcode/id497799835?mt=12](https://apps.apple.com/jp/app/xcode/id497799835?mt=12)                                   |
@@ -176,16 +176,37 @@ $ git --version
 git version 2.24.0
 ```
 
+## hub（GitHubのコマンドラインツール）のインストール
+
+詳しくは [hub](https://github.com/github/hub) を確認してください
+
+```shell
+$ brew install hub
+```
+
 ## gitconfigの設定
 
-ユーザー情報をセット
+#### ユーザー情報をセット
 
 ```shell
 $ git config --global user.name "ユーザー名"
 $ git config --global user.email 自分のメールアドレス
 ```
 
-コミットテンプレートファイルをセット
+#### aliasの設定
+
+下記記事の内容を参考にハッシュ値からプルリクを探すエイリアスを設定します
+
+- [Commit Hash から、該当 Pull Request を見つける方法 - Qiita](https://qiita.com/awakia/items/f14dc6310e469964a8f7)
+
+```shell
+$ git config --global alias.showpr \!"f() { git log --merges --oneline --reverse --ancestry-path \$1...master | grep 'Merge pull request #' | head -n 1; }; f"
+$ git config --global alias.openpr \!"f() { hub browse -- \`git log --merges --oneline --reverse --ancestry-path \$1...master | grep 'Merge pull request #' | head -n 1 | cut -f5 -d' ' | sed -e 's%#%pull/%'\`; }; f"
+```
+
+#### コミットテンプレートを設定
+
+Emojiでコミットメッセージを飾れるようにコミットメッセージのテンプレートを設定する
 
 ```shell
 $ touch ~/.commit_template
