@@ -89,6 +89,9 @@ alias sshc='sh $HOME/.tool/ssh_connection/ssh_connection.sh'
 # eroge_release_cmdのエイリアスを設定（独自ツール）
 alias getchuya='cd $HOME/.tool/eroge_release_cmd/;bundle exec getchuya'
 
+# qiita_command を使用してQiitaのトレンドを取得するエイリアス設定（独自ツール）
+alias qiita='$HOME/.tool/qiita_command/qiita'
+
 # hostsファイルをVSCodeで開く
 alias hosts='sudo code /private/etc/hosts'
 
@@ -524,11 +527,6 @@ Qiitaのトレンド記事をSlackに投稿するツールです
 $ $HOME/.tool
 $ git clone https://github.com/dodonki1223/qiita_trend_slack_notifier.git
 $ cd qiita_trend_slack_notifier
-```
-
-gem のインストールをします
-
-```shell
 $ bundle install --path vendor/bundle
 ```
 
@@ -542,6 +540,32 @@ $ bundle install --path vendor/bundle
 
 ```shell
 $ ruby notify_trend.rb
+```
+
+## qiita_command
+
+Qiitaのトレンド情報をコマンドで取得しコンソール上に表示することができるツールです
+
+![qiita_command](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_command/00_sample.gif)
+
+### qiita_command のインストール
+
+```shell
+$ $HOME/.tool
+$ git clone git@github.com:dodonki1223/qiita_command.git
+$ bundle install
+```
+
+### 設定を行う
+
+- [qiita_command の設定を行う](https://github.com/dodonki1223/qiita_command#qiita%E3%81%AE%E3%83%AD%E3%82%B0%E3%82%A4%E3%83%B3%E6%83%85%E5%A0%B1%E3%82%92%E8%A8%AD%E5%AE%9A%E3%81%99%E3%82%8B)
+
+### 動作確認
+
+下記コマンドを実行し Qiita のトレンド情報が取得できたら完了です
+
+```shell
+$ ./qiita
 ```
 
 ## eroge_release_cmd
