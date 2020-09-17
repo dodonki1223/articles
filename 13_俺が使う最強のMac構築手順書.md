@@ -1031,7 +1031,7 @@ $ echo Finderの独自キー設定：$(defaults read com.apple.Finder NSUserKeyE
 
 ### Finderの見た目を変更する
 
-![01_finder_appearance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/my_manual/01_finder_appearance.png)
+![01_finder_appearance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/my_manual/mac_procedure_manual/01_finder_appearance.png)
 
 設定するコマンドは下記になります
 
@@ -1068,7 +1068,7 @@ $ defaults read com.apple.desktopservices DSDontWriteNetworkStores
 
 ## メニューバーの見た目設定
 
-![02_menu_bar_appearance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/my_manual/02_menu_bar_appearance.png)
+![02_menu_bar_appearance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/my_manual/mac_procedure_manual/02_menu_bar_appearance.png)
 
 設定するコマンドは下記になります
 
