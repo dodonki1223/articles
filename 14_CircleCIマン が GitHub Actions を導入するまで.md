@@ -182,3 +182,87 @@ workflows:
 コマンドの実行履歴で **name** で設定した部分が GitHub Actions に表示されます
 
 ![05_workflows_run_name](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/04_check_workflows/05_workflows_run_name.png)
+
+# 自分の思い通りにGitHub Actionsを設定する
+
+とりあえずGitHub Actionsというものを雰囲気分かってもらえたと思います  
+最小構成で実装することができたが他のプロジェクトではどのように設定しているのだろうか……
+
+## 先人の知恵をお借りする
+
+[BestGems.org](https://bestgems.org/) という Ruby gems のダウンロードランキングを確認することができるサイトから総ダウンロード数TOP10のプロジェクトを参考にしてみたいと思います  
+
+| ランキング  | 名前                                                              | GitHub Actions使用有無  |
+|:-----------:|:------------------------------------------------------------------|:-----------------------:|
+| 1           | [rspec-expectations](https://github.com/rspec/rspec-expectations) | ❌                      |
+| 2           | [rspec-core](https://github.com/rspec/rspec-core)                 | ❌                      |
+| 3           | [rspec-mocks](https://github.com/rspec/rspec-mocks)               | ❌                      |
+| 4           | [diff-lcs](https://github.com/halostatue/diff-lcs)                | ⭕                      |
+| 5           | [rspec-support](https://github.com/rspec/rspec-support)           | ❌                      |
+| 6           | [rspec](https://github.com/rspec/rspec)                           | ❌                      |
+| 7           | [bundler](https://github.com/rubygems/bundler)                    | ⭕                      |
+| 8           | [multi_json](https://github.com/intridea/multi_json)              | ❌                      |
+| 9           | [rack](https://github.com/rack/rack)                              | ⭕                      |
+| 10          | [rake](https://github.com/ruby/rake)                              | ⭕                      |
+
+※ランキングは 2020年10月16日のものです
+
+[diff-lcs](https://github.com/halostatue/diff-lcs)、[bundler](https://github.com/rubygems/bundler)、[rack](https://github.com/rack/rack)、[rake](https://github.com/ruby/rake) を参考にして作成していきたいと思います
+
+### ファイル構成を確認する
+
+プロジェクトごとファイル構成を確認する
+
+#### diff-lcs
+
+ci.yml は複数のOS、複数のRubyのバージョンでのテストを実行しているようだ
+
+```
+diff-lcs
+ └ .github
+     └ workflows
+         └ ci.yml
+```
+
+#### bundler
+
+主にテストをOSごと実行する Workflow に Linter を実行する Workflow に分けているようだ
+
+
+```
+bundler
+ └ .github
+     └ workflows
+         ├ jruby.yml
+         ├ ubuntu-bundler3.yml
+         ├ ubuntu-lint.yml
+         ├ ubuntu.yml
+         └ windows.yml
+```
+
+#### rack
+
+development.yml は複数のOS、複数のRubyのバージョンでのテストを実行しているようだ
+
+```
+rack
+ └ .github
+     └ workflows
+         └ development.yml
+```
+
+#### rake
+
+主にテストをOSごと、複数のRubyバージョンでのテストを実行しているようだ
+
+```
+rake
+ └ .github
+     └ workflows
+         ├ macos.yml
+         ├ test.yml
+         └ windows.yml
+```
+
+
+
