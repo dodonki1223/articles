@@ -395,3 +395,264 @@ jobs:
       - name: Run tests
         run: bundle exec ruby -S rake
 ```
+
+## workflows のファイルを編集する
+
+上記情報を元にファイルを編集していく
+
+### 複数OS、複数Rubyバージョンで実行できるようにする
+
+- workflows 名を **CI** に変更
+- OSを **ubuntu、macos** で実行できるようにする
+- Rubyのバージョンを **2.7、2.6** で実行できるようにする
+- uses で使用している **ruby/setup-ruby** のバージョンを **v1** にする
+
+```yml
+name: CI
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        ruby: [2.7, 2.6]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install dependencies
+        run: bundle install
+      - name: Run tests
+        run: bundle exec rspec
+```
+
+### ブランチでの絞り込みをなくす
+
+- push と pull_request のイベント時に実行されるよう **on** 句を変更する
+
+```yml
+on: [push, pull_request] 
+```
+
+<details>
+<summary>on句を上記の書き方に変更する</summary>
+<div>
+
+```yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        ruby: [2.7, 2.6]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install dependencies
+        run: bundle install
+      - name: Run tests
+        run: bundle exec rspec
+```
+
+</div>
+</details>
+
+### 静的解析ツールを実行する
+
+- RuboCopが実行されるようにする
+
+```yml
+- name: Run Rubocop
+  run:  bundle exec rubocop
+```
+
+<details>
+<summary>上記設定を追加する</summary>
+<div>
+
+```yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        ruby: [2.7, 2.6]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install dependencies
+        run: bundle install
+      - name: Run Rubocop
+        run:  bundle exec rubocop
+      - name: Run tests
+        run: bundle exec rspec
+```
+
+</div>
+</details>
+
+### テストのカバレッジ結果を見れるようにする
+
+CircleCIだと **store_artifacts** を使用するとアーティファクトのアップロードができるようになります  
+同じことをGitHub Actionsでもできるようにします  
+公式のドキュメントの以下の記事を参考にテストのカバレッジをアーティファクトとしてアップロードされるようにしようと思います
+
+- [ワークフロー データをアーティファクトとして保存する - GitHub Docs](https://docs.github.com/ja/free-pro-team@latest/actions/guides/storing-workflow-data-as-artifacts)
+
+記事を参考に下記の設定を追加します
+
+```yml
+- name: Archive code coverage results
+  uses: actions/upload-artifact@v2
+  with:
+    name: code-coverage-report
+    path: coverage
+```
+
+<details>
+<summary>設定追加後</summary>
+<div>
+
+```yml
+name: CI
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        ruby: [2.7, 2.6]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: Install dependencies
+        run: bundle install
+      - name: Run Rubocop
+        run:  bundle exec rubocop
+      - name: Run tests
+        run: bundle exec rspec
+      - name: Archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: coverage
+```
+
+</div>
+</details>
+
+### Slack通知を実装する
+
+CircleCI の場合は Orb を使用することでSlack通知を行うことができるようになる  
+
+GitHub Actionsでは同じように uses を使用して行うことができるようだ
+幾つかSlack通知が行えるものがあるようだが今回はドキュメントもしっかりとある [action-slack](https://github.com/marketplace/actions/action-slack) を使用して実装する
+
+ドキュメントを参考に以下を追加する
+
+```yml
+- name: Github Actions notify to Slack
+  uses: 8398a7/action-slack@v3
+  with:
+    status: ${{ job.status }}
+    fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+    mention: 'here'
+    if_mention: failure
+  env:
+    GITHUB_TOKEN: ${{ github.token }}
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+    MATRIX_CONTEXT: ${{ toJson(matrix) }}
+  if: always()
+```
+　
+このままでは以下の部分が設定されてないので読み取ることができない
+
+```yml
+secrets.SLACK_WEBHOOK_URL
+```
+
+以下の公式の記事を参考にSlackの **WEBHOOK_URL** をリポジトリに設定します
+CircleCI の環境変数を設定することと同じことをしています
+
+- [Encrypted secrets - GitHub Docs](https://docs.github.com/ja/free-pro-team@latest/actions/reference/encrypted-secrets)
+
+<details>
+<summary>上記設定が完了したら設定を追加します</summary>
+<div>
+
+```yml
+name: ci
+
+on: [push, pull_request]
+
+jobs:
+  ci:
+    strategy:
+      matrix:
+        os: [ubuntu, macos]
+        ruby: [2.7, 2.6]
+    runs-on: ${{ matrix.os }}-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: set up ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+      - name: install dependencies
+        run: bundle install
+      - name: run rubocop
+        run:  bundle exec rubocop
+      - name: run tests
+        run: bundle exec rspec
+      - name: archive code coverage results
+        uses: actions/upload-artifact@v2
+        with:
+          name: code-coverage-report
+          path: coverage
+      - name: github actions notify to slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventname,ref,workflow,job,took
+          mention: 'here'
+          if_mention: failure
+        env:
+          github_token: ${{ github.token }}
+          slack_webhook_url: ${{ secrets.slack_webhook_url }}
+          matrix_context: ${{ tojson(matrix) }}
+        if: always()
+```
+
+</div>
+</details>
