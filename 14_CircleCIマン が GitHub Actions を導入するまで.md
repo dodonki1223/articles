@@ -264,5 +264,134 @@ rake
          └ windows.yml
 ```
 
+### ファイルの中身を参考にする
 
+ファイルの中身を確認し参考になりそうな部分を確認してみる
 
+#### rake/.github/workflows/test.yml
+
+下記のようにすると
+
+```yml
+runs-on: ${{ matrix.os }}
+strategy:
+  matrix:
+    os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+    ruby: [ 2.6, 2.5, 2.4, 2.3, 2.2, jruby, jruby-head, truffleruby, ruby-head ]
+・
+・
+・
+steps:
+- uses: ruby/setup-ruby@v1
+  with:
+    ruby-version: ${{ matrix.ruby }}
+```
+
+OSとRubyのバージョンを配列で宣言して１つのファイルでCIを実行することができるようだ
+
+```yml
+name: ubuntu
+
+on: [push, pull_request]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      matrix:
+        os: [ 'ubuntu-latest', 'macos-latest', 'windows-latest' ]
+        ruby: [ 2.6, 2.5, 2.4, 2.3, 2.2, jruby, jruby-head, truffleruby, ruby-head ]
+        exclude:
+          - os: windows-latest
+            ruby: truffleruby
+          - os: windows-latest
+            ruby: jruby-head
+          - os: windows-latest
+            ruby: jruby
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ruby/setup-ruby@v1
+      with:
+        ruby-version: ${{ matrix.ruby }}
+    - name: Install dependencies
+      run: gem install minitest
+    - name: Run test
+      run: ruby -Ilib exe/rake
+```
+
+#### diff-lcs/.github/workflows/ci.yml
+
+下記のようにすると
+
+```yml
+runs-on: ${{ matrix.os }}-latest
+```
+
+runs-onの指定の時 **-latest** で宣言するとOSの指定をOS名だけで宣言することができるらしい
+つまりOS名とバージョンの指定を分離することができる
+
+```yml
+# This workflow uses actions that are not certified by GitHub.
+# They are provided by a third-party and are governed by
+# separate terms of service, privacy policy, and support
+# documentation.
+# This workflow will download a prebuilt Ruby version, install dependencies and run tests with Rake
+# For more information see: https://github.com/marketplace/actions/setup-ruby-jruby-and-truffleruby
+
+name: CI
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+
+jobs:
+  test:
+    strategy:
+      matrix:
+        os:
+          - ubuntu
+          - macos
+          - windows
+        ruby:
+          - 2.5
+          - 2.6
+          - 2.7
+          - head
+          - debug
+          - mingw
+          - mswin
+          - jruby
+          - jruby-head
+          - truffleruby
+          - truffleruby-head
+        exclude:
+          - os: macos
+            ruby: mingw
+          - os: macos
+            ruby: mswin
+          - os: ubuntu
+            ruby: mingw
+          - os: ubuntu
+            ruby: mswin
+          - os: windows
+            ruby: debug
+          - os: windows
+            ruby: truffleruby
+          - os: windows
+            ruby: truffleruby-head
+    runs-on: ${{ matrix.os }}-latest
+    continue-on-error: ${{ endsWith(matrix.ruby, 'head') || matrix.ruby == 'debug' || matrix.os == 'windows' }}
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: ${{ matrix.ruby }}
+          bundler-cache: true
+      - name: Install dependencies
+        run: bundle install
+      - name: Run tests
+        run: bundle exec ruby -S rake
+```
