@@ -192,6 +192,8 @@ workflows:
 
 [BestGems.org](https://bestgems.org/) という Ruby gems のダウンロードランキングを確認することができるサイトから総ダウンロード数TOP10のプロジェクトを参考にしてみたいと思います  
 
+![00_bestgems](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/05_wisdom_of_anestors/00_bestgems.png)
+
 | ランキング  | 名前                                                              | GitHub Actions使用有無  |
 |:-----------:|:------------------------------------------------------------------|:-----------------------:|
 | 1           | [rspec-expectations](https://github.com/rspec/rspec-expectations) | ❌                      |
@@ -606,6 +608,10 @@ secrets.SLACK_WEBHOOK_URL
 CircleCI の環境変数を設定することと同じことをしています
 
 - [Encrypted secrets - GitHub Docs](https://docs.github.com/ja/free-pro-team@latest/actions/reference/encrypted-secrets)
+
+下記の画面みたいな表示になっていれば **SLACK_WEBHOOK_URL** 設定は大丈夫です
+
+![00_complete_slack_webhook_url](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/06_edit_workflows/00_complete_slack_webhook_url.png)
 
 <details>
 <summary>上記設定が完了したら設定を追加します</summary>
