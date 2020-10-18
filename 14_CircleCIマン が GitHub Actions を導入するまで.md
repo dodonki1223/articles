@@ -662,3 +662,302 @@ jobs:
 
 </div>
 </details>
+
+# 実際に実行する
+
+上記で編集した workflows のファイルを push することで GitHub Actions が実行されるようになります
+
+## 詳細を確認していく
+
+OS、RubyのバージョンごとCIが実行されるようになっています
+
+![00_run_start](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/07_run_after_edited/00_run_start.png)　
+
+完了すると **Artifacts** にテストのカバレッジ結果が zip で圧縮されてダウンロードできるようになっています  
+CircleCIと違って画面から結果を確認することはできません
+
+![01_complete_run](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/07_run_after_edited/01_complete_run.png)　
+
+また１つのCIが完了するごとにSlackに完了通知が飛びます
+
+![02_notify_slack](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/07_run_after_edited/02_notify_slack.png)　
+
+これで一通りやりたかったことができるようになりました！
+
+# 応用編：Gemの自動アップデート用のプルリクをGitHub Actionsで自動化する
+
+応用編として、Gemの自動アップデート用のプルリクを自動で作成する workflows を作ろうと思います
+
+## SSH で GitHub Actions に入る
+
+CIを作成していく段階で個人的に必須な SSH で接続する機能は CircleCI では当たり前だが GitHub Actions ではどうするのか……  
+公式では用意されていないようなので uses を使用して行うことができる  
+下記の記事を参考にするとよい
+
+- [GitHub ActionsにSSHで入る(簡単3ステップ) - Qiita](https://qiita.com/shonansurvivors/items/cb8902acfe5c3a1b3ca0)
+
+## スケジュールで実行するにはどうしたよいのか？
+
+CircleCI だと[トリガー](https://circleci.com/docs/ja/2.0/triggers/)を使用することでスケジュールされたCIを実行することができる  
+GitHub Actions では [on.schedule](https://docs.github.com/ja/free-pro-team@latest/actions/reference/workflow-syntax-for-github-actions#onschedule) を使用することで実現できそうです
+
+CircleCI でも GitHub Actions のどちらも cron 形式でスケジュールを設定することができます
+[crontab guru](https://crontab.guru/) のサイトを参考にしてスケジュールを設定するとよいでしょう
+
+こんな感じで設定する
+
+```yml
+on:
+  schedule:
+    # * はYAMLに置ける特殊文字なので、この文字列は引用符で囲まなければならない
+    - cron:  '*/15 * * * *'
+```
+
+schedule の詳しい仕様については公式のドキュメントを参考にすること
+
+- [ワークフローをトリガーするイベント - GitHub Docs](https://docs.github.com/ja/enterprise-server@2.22/actions/reference/events-that-trigger-workflows)
+
+CircleCI と同じで GitHub Actions も cron は UTC で設定する必要があります
+
+## 手順を考える
+
+以下の手順をCIで実行することができれば実現できそうである
+
+- ① Gitの設定を行う（メールアドレス、ユーザー名）
+- ② Gem Update 用のブランチを作成する
+- ③ bundle update を行う
+- ④ commit して push する
+- ⑤ プルリクエストを自動で作成する
+- ⑥ Slackに完了通知を行う
+
+## 実装する
+
+上記で考えた手順を元に実際に実装していく
+
+### 手順以外の実装
+
+毎月の１日の９時に実行されるようにする  
+cron 式で設定した以外は先程、作成したものとほぼ同じである
+
+<details>
+<summary>設定内容</summary>
+<div>
+
+```yml
+name: GemUpdate
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  create-gem-update:
+    strategy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install dependencies
+        run: bundle install
+```
+
+</div>
+</details>
+
+### ① Gitの設定を行う（メールアドレス、ユーザー名）
+
+git checkout ができているので git はおそらくインストールされている前提ですすめる  
+**インストールされているかなど調査する時は直接 ssh で接続して確認すると良い**
+
+複数行の時はCircleCIと同じく **|** を使用するようだ
+
+```yml
+- name: Settings Git
+  run: |
+    git config --global user.email ${{ secrets.MAIL_ADDRESS }}
+    git config --global user.name "dodonki1223"
+```
+
+**secrets.MAIL_ADDRESS** こちらの設定は **SLACK_WEBHOOK_URL** と同じように設定します  
+この場合はメールアドレス直打ちでもいいような気がする
+
+### ② Gem Update 用のブランチを作成する
+
+ブランチを名前を付けて切り替えるコマンドです  
+**gem_update_20201001** みたいな形がブランチ名になります
+
+```bash
+git checkout -b "gem_update_`date +%Y%m%d`"
+```
+
+### ③ bundle update を行う
+
+前の段階で bundle install を行っているので update を行うだけです
+
+```bash
+bundle update
+```
+
+### ④ commit して push する
+
+ファイルをコミットして先程作成したブランチに push します
+
+```bash
+git add .
+git commit -m ':wrench: Gem Update'
+git push origin "gem_update_`date +%Y%m%d`"
+```
+
+### ⑤ プルリクエストを自動で作成する
+
+[hub](https://github.com/github/hub)コマンドを使用してプルリクエストを作成する
+最近、[GitHub CLI](https://github.com/cli/cli) がリリースされたので [hub](https://github.com/github/hub)コマンドの代わりに [GitHub CLI](https://github.com/cli/cli) を使用するでもよいかもしれません
+
+```bash
+hub pull-request -b master -m "🔧 Gem Update `date +%Y-%m-%d`"
+```
+
+### ②〜⑤を組み立てる
+
+基本的には②〜⑤をそのまま繋げるだけで大丈夫なのですが下記の記述が追加で必要です
+
+```yml
+env:
+    GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+上記記述に関しては [hub](https://github.com/github/hub)コマンドのリポジトリに Readme に GitHub Actions で使用する時のサンプル例に書かれている例になります
+
+- [hub is ready to be used in your GitHub Actions workflows](https://github.com/github/hub#github-actions)
+
+```yml
+- name: Create gem update pull request
+  run: |
+    git checkout -b "gem_update_`date +%Y%m%d`"
+    bundle update
+    git add .
+    git commit -m ':wrench: Gem Update'
+    git push origin "gem_update_`date +%Y%m%d`"
+    hub pull-request -b master -m "🔧 Gem Update `date +%Y-%m-%d`"
+  env:
+      GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+```
+
+コマンドを組み上げる時は基本的には実際に ssh でログインして実際の環境で使用できるか確認しながらすすめるとよいです  
+コマンドのインストールが必要かどうかなども ssh でログインしながら確かめると良いです
+
+### ⑥ Slackに完了通知を行う
+
+こちらは先程、作成したもので既に行っているので特に説明はしません
+
+```yml
+- name: Github Actions notify to Slack
+  uses: 8398a7/action-slack@v3
+  with:
+    status: ${{ job.status }}
+    fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+    mention: 'here'
+    if_mention: failure
+  env:
+    GITHUB_TOKEN: ${{ github.token }}
+    SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+  if: always()
+```
+
+### 完成品
+
+実際に作成したもので最終形は以下になります
+
+<details>
+<summary>完成品</summary>
+<div>
+
+
+```yml
+name: GemUpdate
+
+on:
+  schedule:
+    - cron: '0 0 1 * *'
+
+jobs:
+  create-gem-update:
+    strategy:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v2
+      - name: Set up Ruby
+        uses: ruby/setup-ruby@v1
+        with:
+          ruby-version: 2.7
+      - name: Install dependencies
+        run: bundle install
+      - name: Settings Git
+        run: |
+          git config --global user.email ${{ secrets.MAIL_ADDRESS }}
+          git config --global user.name "dodonki1223"
+      - name: Create gem update pull request
+        run: |
+          git checkout -b "gem_update_`date +%Y%m%d`"
+          bundle update
+          git add .
+          git commit -m ':wrench: Gem Update'
+          git push origin "gem_update_`date +%Y%m%d`"
+          hub pull-request -b master -m "🔧 Gem Update `date +%Y-%m-%d`"
+        env:
+            GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+      - name: Github Actions notify to Slack
+        uses: 8398a7/action-slack@v3
+        with:
+          status: ${{ job.status }}
+          fields: repo,message,commit,author,action,eventName,ref,workflow,job,took
+          mention: 'here'
+          if_mention: failure
+        env:
+          GITHUB_TOKEN: ${{ github.token }}
+          SLACK_WEBHOOK_URL: ${{ secrets.SLACK_WEBHOOK_URL }}
+        if: always()
+```
+
+</div>
+</details>
+
+## 注意事項
+
+**on.schedule** は下記の時だけ実行されます
+
+> デフォルトまたはベースブランチの直近のコミットで実行されます
+
+これに気づかないといくらやってもスケジュールが実行されずハマることになります……自分は実行されずにすごく困ったらこれが原因でした
+
+# CircleCIとGitHub Actions の違うところ
+
+自分が感じた CircleCI と GitHub Actions の違いをまとめようと思います
+
+## GitHub Actionsは遅い時がある
+
+GitHub Actionsを使っていて気になったのだがなぜかすごく遅い時がある
+CircleCIだとだいたい終了時間が同じ感覚を受けるがGitHub Actionsはやたらと遅い時がある
+
+使用されるサーバーのスペックガチャにより早かったり、遅かったりするのかも知れない……
+
+## いろいろなトリガーが用意されている
+
+CircleCI と違っていろいろな webhookイベントをトリガーに実行できるようだ
+詳しくはドキュメントを参考にすると良い
+
+- [ワークフローをトリガーするイベント - GitHub Docs](https://docs.github.com/ja/enterprise-server@2.22/actions/reference/events-that-trigger-workflows)
+
+## ファイルの構成がスッキリする
+
+CircleCIと違ってファイルの分割ができるため、行数を少なくすることができる
+
+# 最後に
+
+ずっとGitHub Actionsが難しそうで逃げていましたが実際にやってみるとすぐに実装することができました  
+先人の知恵をお借りしたことにより自分の中で思ったよりも早く理解することができたのだと思います
+
+これからもGitHub Actions を使っていきましょう！！
