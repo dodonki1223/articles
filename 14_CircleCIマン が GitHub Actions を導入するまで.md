@@ -80,7 +80,6 @@ jobs は複数追加することができます
 
 ![00_workflows_name_check](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/14/04_check_workflows/00_workflows_name_check.png)
 
-
 ### on について
 
 GitHub Actions が実行されるトリガーを設定することができます（いろいろなイベントに対して [トリガー](https://docs.github.com/ja/free-pro-team@latest/actions/reference/events-that-trigger-workflows) を実行できる）  
