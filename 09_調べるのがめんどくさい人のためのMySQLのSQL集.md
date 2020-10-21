@@ -1103,6 +1103,21 @@ ORDER BY table_schema
 |  DROP VIEW view_2; |
 |  DROP VIEW view_3; |
 
+## VIEWの一覧を作成するCREATE文の一覧
+
+```sql
+SELECT CONCAT(TABLE_SCHEMA, '.' , TABLE_NAME)                                                                                                          AS target_view
+     , CONCAT('CREATE ALGORITHM=UNDEFINED DEFINER=`', DEFINER, '` SQL SECURITY ', SECURITY_TYPE, ' VIEW `', TABLE_NAME, '` AS ', VIEW_DEFINITION, ';') AS create_view
+  FROM information_schema.views
+;
+```
+
+|  target_view |  create_view                                                                                               |
+|:------------:|:-----------------------------------------------------------------------------------------------------------|
+|  view_1      | CREATE ALGORITHM=UNDEFINED DEFINER=`user@%` SQL SECURITY DEFINER VIEW `view_1` AS select * from hoge_fuga; |
+|  view_2      | CREATE ALGORITHM=UNDEFINED DEFINER=`user@%` SQL SECURITY DEFINER VIEW `view_2` AS select * from fuga_hoge; |
+|  view_3      | CREATE ALGORITHM=UNDEFINED DEFINER=`user@%` SQL SECURITY DEFINER VIEW `view_3` AS select * from hoge_hoge; |
+
 ---
 
 # その他
