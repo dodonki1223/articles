@@ -3040,7 +3040,7 @@ karabiner.json に下の設定をコピーして貼り付けください
 </div>
 </details>
 
-## Rectangleの設定
+# Rectangleの設定
 
 |   動作           | キー  |
 |:----------------:|:-----:|
