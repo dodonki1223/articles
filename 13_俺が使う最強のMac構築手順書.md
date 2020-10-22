@@ -33,7 +33,6 @@ MacOSの設定はめんどくさいのでコマンドだけで完結するよう
 | <img width="100" alt="slack"              src="https://a.slack-edge.com/80588/marketing/img/meta/slack_hash_256.png">                                                                                                    | Slack                  | チャットツール               | [https://slack.com/intl/ja-jp/downloads/mac](https://slack.com/intl/ja-jp/downloads/mac)                                                         |
 | <img width="100" alt="karabiner-elements" src="https://beadored.com/wp-content/uploads/2017/02/Karabiner-Elements.jpg">                                                                                                  | Karabiner-Elements     | キーボードカスタマイズツール | [https://pqrs.org/osx/karabiner/](https://pqrs.org/osx/karabiner/)                                                                               |
 | <img width="100" alt="alfred"             src="https://www.alfredapp.com/media/logo4@2x.png">                                                                                                                            | Alfred                 | コマンドラインランチャー     | [https://www.alfredapp.com/](https://www.alfredapp.com/)                                                                                         |
-| <img width="100" alt="spectacle"          src="https://static.macupdate.com/products/41147/m/spectacle-logo.webp?v=1568311675">                                                                                          | Spectacle              | ウィンドウ操作ツール         | [https://www.spectacleapp.com/](https://www.spectacleapp.com/)                                                                                   |
 | <img width="100" alt="gitkraken"          src="https://www.gitkraken.com/img/glo/glo-git-gui.svg">                                                                                                                       | GitKraken              | Git GUI ツール               | [https://www.gitkraken.com/](https://www.gitkraken.com/)                                                                                         |
 | <img width="100" alt="backup-and-sync"    src="https://www.concordcarlisle.org/cchstech/wp-content/uploads/sites/87/2017/11/Google-Backup-and-Sync.png">                                                                 | バックアップと同期     | Google ドライブ同期ツール    | [https://www.google.com/intl/ja_ALL/drive/download/backup-and-sync/](https://www.google.com/intl/ja_ALL/drive/download/backup-and-sync/)         |
 | <img width="100" alt="googlejapanese"     src="https://www.google.co.jp/ime/images/product-icon.png">                                                                                                                    | Google 日本語入力      | IME ソフト                   | [https://www.google.co.jp/ime/](https://www.google.co.jp/ime/)                                                                                   |
@@ -45,7 +44,10 @@ MacOSの設定はめんどくさいのでコマンドだけで完結するよう
 | <img width="100" alt="keyboardcleantool"  src="https://folivora.ai/folivora/static/media/keyboardcleantool.1b5c8eb9.png">                                                                                                | KeyboardCleanTool      | キーボード掃除ツール　       | [https://folivora.ai/keyboardcleantool](https://folivora.ai/keyboardcleantool)                                                                   |
 | <img width="100" alt="theunarchiver"      src="https://is1-ssl.mzstatic.com/image/thumb/Purple114/v4/e7/d9/ea/e7d9ea79-ebe0-02ec-8281-2e25dfd144a0/unarchiver.png/230x0w.png">                                           | The Unarchiver         | 解凍ソフト          　       | [https://apps.apple.com/jp/app/the-unarchiver/id425424353?mt=12](https://apps.apple.com/jp/app/the-unarchiver/id425424353?mt=12)                 |
 | <img width="100" alt="zoom"               src="https://is3-ssl.mzstatic.com/image/thumb/Purple123/v4/01/c0/98/01c09897-1c7a-1210-6719-e29345f5901e/AppIcon-0-1x_U007emarketing-0-0-85-220-9.png/246x0w.png">             | ZOOM Cloud Meetings    | Web会議             　       | [https://apps.apple.com/us/app/zoom-us-cloud-video-meetings/id546505307](https://apps.apple.com/us/app/zoom-us-cloud-video-meetings/id546505307) |
-| <img width="100" alt="blurred"            src="https://is2-ssl.mzstatic.com/image/thumb/Purple123/v4/9d/92/3e/9d923e23-27c4-a900-0203-7735c2527af4/AppIcon-0-0-85-220-0-0-0-0-4-0-0-0-2x-sRGB-0-0-0-0-0.png/246x0w.png"> | Blurred                | 使用しているウィンドウ可視化 | [https://apps.apple.com/app/blurred/id1497527363](https://apps.apple.com/app/blurred/id1497527363)         　　　　　　　　　　　　　　　        |
+| <img width="100" alt="postman"            src="https://cdn.auth0.com/blog/build-a-secure-express-api-using-postman-and-auth0/postman-logo.png">                                                                          | Postman                | API開発支援ツール            | [https://www.postman.com/downloads/](https://www.postman.com/downloads/)                                                                         |
+| <img width="100" alt="virtualbox"         src="https://www.virtualbox.org/graphics/vbox_logo2_gradient.png">                                                                                                             | VirtualBox             | 仮想化ソフト                 | [https://www.virtualbox.org/wiki/Downloads](https://www.virtualbox.org/wiki/Downloads)                                                           |
+| <img width="100" alt="commentscreen"      src="https://commentscreen.com/images/logo/CSLogo@3x.png">                                                                                                                     | Comment Screen         | ビデオ会議支援ツール         | [https://commentscreen.com/#download](https://commentscreen.com/#download)                                                                       |
+| <img width="100" alt="rectangle"          src="https://rectangleapp.com/images/appIconNoShadow512.png">                                                                                                                  | Rectangle              | ウィンドウ操作ツール         | [https://rectangleapp.com/](https://rectangleapp.com/)                                                                                           |
 
 # Homebrew のインストール
 
@@ -3038,28 +3040,17 @@ karabiner.json に下の設定をコピーして貼り付けください
 </div>
 </details>
 
-# Spectacleの設定
+## Rectangleの設定
 
 |   動作           | キー  |
 |:----------------:|:-----:|
-| Center           | ^⌥C  |
-| Fullscreen       | ^⌥F  |
-| Left Half        | ^⌘← |
-| Right Half       | ^⌘→ |
-| Top Half         | ^⌘→ |
-| Bottom Half      | ^⌘↓ |
-| Next Display     | ^⌥↑ |
-| Previous Display | ^⌥↓ |
-
-# Blurredの設定
-
-- Blurred level
-  - `40%` に設定
-- Blur mode
-  - `Single` に設定
-- `Enable Blurred` をチェック
-- `Start Blurred when login` をチェック
-- `Open Preferences Window when login` をチェック
+| 最大化           | ^⌥F  |
+| 左半分           | ^⌘← |
+| 右半分           | ^⌘→ |
+| 上半分           | ^⌘↑ |
+| 下半分           | ^⌘↓ |
+| 次のディスプレイ | ^⌥↑ |
+| 前のディスプレイ | ^⌥↓ |
 
 # バックアップと同期の設定
 
