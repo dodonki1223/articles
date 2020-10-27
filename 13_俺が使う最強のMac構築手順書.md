@@ -323,6 +323,45 @@ Hi ユーザー名! You've successfully authenticated, but GitHub does not provi
 
 解凍する時は右クリックから`このアプリケーションで開く` で `The Unarchiver` を選択して `shift-Jis` で解凍すること
 
+## AWS 関連の CLI をインストールする
+
+AWS関連で使用するCLIをインストール方法をここにまとめる
+
+### AWS CLI バージョン２のインストール
+
+公式の [ドキュメント](https://docs.aws.amazon.com/ja_jp/cli/latest/userguide/install-cliv2-mac.html#cliv2-mac-install-cmd-all-users) を参考にインストールする
+
+```shell 
+$ curl "https://awscli.amazonaws.com/AWSCLIV2.pkg" -o "AWSCLIV2.pkg"
+$ sudo installer -pkg AWSCLIV2.pkg -target /
+```
+
+### AWS SAM CLI のインストール
+
+公式の [ドキュメント](https://docs.aws.amazon.com/ja_jp/serverless-application-model/latest/developerguide/serverless-sam-cli-install-mac.html) を参考にインストール
+
+```shell
+$ brew tap aws/tap
+$ brew install aws-sam-cli
+```
+
+### Amazon ECS CLI のインストール
+
+公式の [ドキュメント](https://docs.aws.amazon.com/ja_jp/AmazonECS/latest/developerguide/ECS_CLI_installation.html) を参考にインストール
+
+```shell
+$ sudo curl -Lo /usr/local/bin/ecs-cli https://amazon-ecs-cli.s3.amazonaws.com/ecs-cli-darwin-amd64-latest
+$ sudo chmod +x /usr/local/bin/ecs-cli
+```
+
+### Amplify CLI のインストール
+
+公式の [ドキュメント](https://docs.amplify.aws/cli/start/install) を参考にインストール
+
+```shell
+$ npm install -g @aws-amplify/cli
+```
+
 # その他必要なものをインストール
 
 ```shell
@@ -576,8 +615,6 @@ $ ./qiita
 詳しくは[eroge_release_cmd](https://github.com/dodonki1223/eroge_release_cmd)を参照してください
 
 ![00_eroge_release_cmd](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_cmd/00_eroge_release_cmd.gif)
-
-
 
 ### eroge_release_cmd のインストール
 
