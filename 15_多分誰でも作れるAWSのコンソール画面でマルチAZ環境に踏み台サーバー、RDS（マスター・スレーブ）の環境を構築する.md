@@ -1,0 +1,1170 @@
+# 多分誰でも作れるAWSのコンソール画面でマルチAZ環境に踏み台サーバー、RDS（マスター・スレーブ）の環境を構築する
+
+下記画像のような、AWSにVPC、踏み台サーバー、RDSの一般的な構成をコンソール画面から作成する方法をスクリーンショットですごく細かめに紹介していきます
+
+![03_eroge_release_db_rds](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/readme/03_eroge_release_db_rds.png)
+
+用途としては個人で使用することを想定しているので踏み台サーバーの冗長化は行っていません
+大体ですが、この構成だと毎月6000円ぐらいの料金がかかります
+
+また使用している名前が気になると思いますがスルーして頂けると助かります
+この構成は自分の [Rails と AWS で行う DB マイグレーションシステム](https://github.com/dodonki1223/eroge_release_db) で作成したものになります  
+実際の全体像は以下になります
+
+![00_eroge_release_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/readme/00_eroge_release_db.png)
+
+# すごく参考になった教材
+
+AWSの環境構築には Udemy の `手を動かしながら2週間で学ぶ AWS 基本から応用まで` の教材をすごく参考にさせて頂きました
+現在は受講出来ないようなので作者のブログ記事の [AWS学習の0→1をサポートする講座「手を動かしながら2週間で学ぶ AWS 基本から応用まで」をUdemyでリリースしました - log4ketancho](https://www.ketancho.net/entry/2018/09/03/074115) を確認してください
+
+# VPCの環境構築
+
+VPCの環境構築を行います
+ap-northeast-1a、ap-northeast-1cそれぞれのアベイラビリティーゾーンにパブリックサブネット、プライベートサブネットを１つずつ作成していきます  
+
+## 完成図
+
+最終的には下記のような構成になります
+
+![00_eroge_release_vpc](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/00_eroge_release_vpc.png)
+
+## VPCの作成
+
+VPCウィザードを使用して `VPC`、`パブリックサブネット`、`インターネットゲートウェイ` を作成します  
+
+### VPCウィザードを開く
+
+`VPCダッシュボード` の画面で `VPCウィザードの起動` をクリックして下さい
+
+![01_create_vpc_dashboard](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/01_create_vpc_dashboard.png)
+
+### ステップ１：VPC設定の選択
+
+![02_create_vpc_wizard_step1](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/02_create_vpc_wizard_step1.png)
+
+`選択` をクリックします
+
+### ステップ２：１個のパブリックサブネットを持つVPC
+
+`VPC名`、`パブリックサブネットの IPv4 CIDR`、`アベイラビリティーゾーン`、`サブネット名` を入力して `VPCの作成` をクリックします 
+
+**`パブリックサブネットの IPv4 CIDR` には `10.0.11.0/24` を入力してください**
+**`アベイラビリティーゾーン` には `ap-northeast-1a` を入力してください**
+**`VPC名` と `サブネット名` には任意の名前を入力してください**
+
+![03_create_vpc_wizard_step2](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/03_create_vpc_wizard_step2.png)
+
+### VPCが正常に作成されました
+
+`OK` をクリックしてください
+
+![04_create_vpc_wizard_ok](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/04_create_vpc_wizard_ok.png)
+
+### VPCが作成されたか確認する
+
+VPCが作成されていることを確認します
+
+![05_create_vpc_created_vpc](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/05_create_vpc_created_vpc.png)
+
+### パブリックサブネットが作成されたか確認する
+
+パブリックサブネットが作成されていることを確認します
+
+![06_create_vpc_created_public_subnet](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/06_create_vpc_created_public_subnet.png)
+
+ルートテーブルにIGW（インターネットゲートウェイ）が設定されていることを確認します
+
+![07_create_vpc_created_public_subnet_route](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/07_create_vpc_created_public_subnet_route.png)
+
+### IGW（インターネットゲートウェイ）が作成されたか確認する
+
+IGW（インターネットゲートウェイ）が作成されていることを確認します
+
+![08_create_vpc_created_internet_gateway](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/08_create_vpc_created_internet_gateway.png)
+
+### VPCの作成後
+
+以上で以下の状態まで作成できました
+
+![09_cretae_vpc_and_public_subnet](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/09_cretae_vpc_and_public_subnet.png)
+
+## パブリックサブネットを作成
+
+アベイラビリティーゾーンの `ap-northeast-1a` にパブリックサブネットが作成されたので `ap-northeast-1c` にもパブリックサブネットを作成していきます
+
+### サブネット作成画面を開く
+
+`サブネット` の画面で `サブネットの作成` をクリックして下さい
+
+![10_create_public_subnet_open](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/10_create_public_subnet_open.png)
+
+### サブネットの作成
+
+`名前タグ`、`VPC`、`アベイラビリティーゾーン`、`IPv4 CIDR ブロック` を入力して `作成` をクリックします 
+
+**`VPC` には作成したVPCを選択してください**
+**`アベイラビリティーゾーン` には `ap-northeast-1c` を入力してください**
+**`IPv4 CIDRブロック` には `10.0.12.0/24` を入力してください**  
+
+![11_create_public_subnet_screen](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/11_create_public_subnet_screen.png)
+
+`閉じる` をクリックします
+
+![12_create_public_subent_created_close](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/12_create_public_subent_created_close.png)
+
+### ルートテーブルの関連付けの編集画面を開く
+
+新しく作成された `ap-northeast-1c` のサブネットを選択します
+ルートテーブルに `IGW（インターネットゲートウェイ）` が設定されていないため、現状だとこのサブネットはインターネットに出ることが出来ないため、 `プライベートサブネット` になっています  
+
+ルートテーブルに `IGW（インターネットゲートウェイ）` を設定します
+`ルートテーブルの関連付けの編集` をクリックします
+
+![13_create_public_subent_created](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/13_create_public_subent_created.png)
+
+### ルートテーブルの関連付けの編集画面
+
+![14_create_public_subent_edit_route_table](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/14_create_public_subent_edit_route_table.png)
+
+先程作成された `ルートテーブル` に変更します
+
+![15_create_public_subent_select_route_table_id](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/15_create_public_subent_select_route_table_id.png)
+
+`IGW（インターネットゲートウェイ）` が追加されていることが確認できます  
+問題なければ `保存` をクリックします
+
+![16_create_public_subnet_editding_route_table](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/16_create_public_subnet_editding_route_table.png)
+
+`閉じる` をクリックします
+
+![17_create_public_subent_route_table_close](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/17_create_public_subent_route_table_close.png)
+
+### IGW（インターネットゲートウェイ）が追加されているか確認する
+
+ルートテーブルに `IGW（インターネットゲートウェイ）` が追加されていることを確認します
+
+![18_create_public_subent_edited_route_table](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/18_create_public_subent_edited_route_table.png)
+
+### パブリックサブネットの作成後
+
+以上で以下の状態まで作成されました
+
+![19_create_public_subnet](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/19_create_public_subnet.png)
+
+## プライベートサブネットを作成
+
+パブリックサブネット同様にプライベートサブネットを作成していきます
+
+### ap-northeast-1aに作成
+
+`ap-northeast-1a` にサブネットを作成していきます   
+
+#### サブネット作成画面を開く
+
+`サブネット作成` をクリックします
+
+![20_create_private_subent_open_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/20_create_private_subent_open_1a.png)
+
+#### サブネット作成
+
+`名前タグ`、`VPC`、`アベイラビリティーゾーン`、`IPv4 CIDR ブロック` を入力して `作成` をクリックします 
+
+**`VPC` には作成したVPCを選択してください**
+**`アベイラビリティーゾーン` には `ap-northeast-1a` を入力してください**
+**`IPv4 CIDRブロック` には `10.0.21.0/24` を入力してください**  
+
+![21_create_private_subent_editing_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/21_create_private_subent_editing_1a.png)
+
+`閉じる` をクリックします
+
+![22_create_private_subent_created_close_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/22_create_private_subent_created_close_1a.png)
+
+### ap-northeast-1cに作成
+
+`ap-northeast-1c` にサブネットを作成していきます   
+
+#### サブネット作成画面を開く
+
+`ap-northeast-1a` にサブネットが作成されています  
+
+`ap-northeast-1c` にもサブネットを作成していきます
+ `サブネット作成` をクリックします
+
+![23_create_private_subent_created_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/23_create_private_subent_created_1a.png)
+
+#### サブネット作成
+
+`名前タグ`、`VPC`、`アベイラビリティーゾーン`、`IPv4 CIDR ブロック` を入力して `作成` をクリックします 
+
+**`VPC` には作成したVPCを選択してください**
+**`アベイラビリティーゾーン` には `ap-northeast-1c` を入力してください**
+**`IPv4 CIDRブロック` には `10.0.22.0/24` を入力してください**  
+
+![24_create_private_subent_editing_1c](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/24_create_private_subent_editing_1c.png)
+
+`閉じる` をクリックします
+
+![25_create_private_subent_created_close_1c](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/25_create_private_subent_created_close_1c.png)
+
+作成されたことを確認します
+
+![26_create_private_subent_created_1c](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/26_create_private_subent_created_1c.png)
+
+### プライベートサブネット用のルートテーブルを作成する
+
+プライベート用のサブネットを作成していきます
+
+#### パブリックサブネット用のルートテーブルに名前を付ける
+
+プライベート用のサブネットを作成する前にわかりやすいように名前をつけます
+
+![27_create_private_route_table_public_route_table_name](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/27_create_private_route_table_public_route_table_name.png)
+
+#### ルートテーブルの作成画面を開く
+
+`ルートテーブルの作成` をクリックします
+
+![28_create_private_route_table_open_create_route_table](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/28_create_private_route_table_open_create_route_table.png)
+
+#### ルートテーブルの作成
+
+`名前タグ`、`VPC` を入力して `作成` をクリックします
+
+**`VPC` には作成したVPCを選択してください**  
+
+![29_create_private_route_table_create_route_table_editing](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/29_create_private_route_table_create_route_table_editing.png)
+
+`閉じる` をクリックします
+
+![30_create_private_route_table_created_close](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/30_create_private_route_table_created_close.png)
+
+作成されたことを確認します
+
+![31_create_private_route_table_created](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/31_create_private_route_table_created.png)
+
+### ap-northeast-1a に作成したサブネットにルートテーブルに関連付ける
+
+プライベート用に作成したルートテーブルをサブネットに紐付けていきます  
+
+#### ルートテーブルの関連付けの編集画面を開く
+
+`ルートテーブルの関連付けの編集` をクリックします
+
+![32_create_private_route_table_open_edit_route_table_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/32_create_private_route_table_open_edit_route_table_1a.png)
+
+#### ルートテーブルの関連付けの編集
+
+先程作成したルートテーブルを選択し `保存` をクリックします
+
+![33_create_private_route_table_edit_route_table_editing_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/33_create_private_route_table_edit_route_table_editing_1a.png)
+
+`閉じる` をクリックします
+
+![34_create_private_route_table_edit_route_table_close_1a](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/34_create_private_route_table_edit_route_table_close_1a.png)
+
+### ap-northeast-1c に作成したサブネットにルートテーブルに関連付ける
+
+プライベート用に作成したルートテーブルをサブネットに紐付けていきます  
+
+#### ルートテーブルの関連付けの編集画面を開く
+
+`ルートテーブルの関連付けの編集` をクリックします
+
+![35_create_private_route_table_open_edit_route_table_1c](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/35_create_private_route_table_open_edit_route_table_1c.png)
+
+#### ルートテーブルの関連付けの編集
+
+先程作成したルートテーブルを選択し `保存` をクリックします
+
+![36_create_private_route_table_edit_route_table_editing_1c](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/36_create_private_route_table_edit_route_table_editing_1c.png)
+
+`閉じる` をクリックします
+
+![37_create_private_route_table_edit_route_table_close_1c](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/37_create_private_route_table_edit_route_table_close_1c.png)
+
+### プライベート用のルートテーブルに紐付いたか確認する
+
+ルートテーブルにサブネットが紐付いているのを確認できます
+
+![38_create_private_route_table_editing](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/38_create_private_route_table_editing.png)
+
+**以上でVPCの構築は完了です**
+
+![00_eroge_release_vpc](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/vpc_construction/00_eroge_release_vpc.png)
+
+# 踏み台サーバーの環境構築
+
+パブリックサブネットに踏み台サーバー（EC2）を構築します
+本来ならパブリックサブネットに `Auto Scaling` を使用して踏み台サーバーを構築するのが良いがお金もかかるため今回は `Auto Scaling` を使用しないで構築します
+
+**踏み台サーバーが単一障害点になるためあまりよくない構成です**
+
+## 完成図
+
+構築後は以下のような構成図になります
+
+![01_stepping_stone_server](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/01_stepping_stone_server.png)
+
+では早速、環境を構築していきます
+
+## 踏み台サーバー用のEC2インスタンスを作成する
+
+踏み台サーバー用のためのEC2インスタンスを作成します
+
+### EC2インスタンス作成画面を開く
+
+`インスタンス作成` をクリックします
+
+![02_create_ec2_open](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/02_create_ec2_open.png)
+
+### ステップ１：Amazonマシンイメージ（AMI）
+
+`Amazon Linux 2 AMI (HVM), SSD Volume Type` の `64 ビット (x86)` を選択して `選択` をクリックします
+
+![03_create_ec2_step1](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/03_create_ec2_step1.png)
+
+### ステップ２：インスタンスタイプの選択
+
+`t2.nano` を選択し `次のステップ：インスタンスの詳細の設定` をクリックします  
+
+**お金に余裕がある場合はもう少し上のタイプを選択してもいいでしょう**
+
+![04_create_ec2_step2](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/04_create_ec2_step2.png)
+
+### ステップ３：インスタンスの詳細の設定
+
+`ネットワーク`、`サブネット`、`自動割当パブリックIP` を入力します
+
+ネットワークには対象の `VPC` を選択します
+サブネットには `ap-northeast-1aのパブリックサブネット` を選択します
+自動割当パブリックIPは `有効` を選択します（Elastic IPを後で設定しますが一旦有効を設定しておきます）
+
+![05_create_ec2_step3](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/05_create_ec2_step3.png)
+
+#### ユーザーデータ
+
+`ユーザーデータ` は `テキストで` を選択して以下の内容を貼り付けてください  
+
+```shell
+#!/bin/bash
+
+# ホスト名の変更
+# https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/set-hostname.html
+sudo hostnamectl set-hostname eroge-release-stepping-stone-server
+
+# PostgreSQL 11のインストール
+# https://qiita.com/libra_lt/items/f2d2d8ee389daf21d3fb
+sudo rpm -ivh --nodeps https://download.postgresql.org/pub/repos/yum/11/redhat/rhel-7-x86_64/pgdg-redhat-repo-latest.noarch.rpm
+sudo sed -i "s/\$releasever/7/g" "/etc/yum.repos.d/pgdg-redhat-all.repo"
+sudo yum install -y postgresql11
+
+# タイムゾーンをAsia/Tokyoに変更する
+# https://docs.aws.amazon.com/ja_jp/AWSEC2/latest/UserGuide/set-time.html#change_time_zone
+sudo ln -sf /usr/share/zoneinfo/Asia/Tokyo /etc/localtime
+sudo sed -i 's|^ZONE=[a-zA-Z0-9\.\-\"]*$|ZONE="Asia/Tokyo”|g' /etc/sysconfig/clock
+```
+
+最後に `次のステップ：ストレージの追加` をクリックします
+
+### ステップ４：ストレージの追加
+
+基本的にデフォルトのままで良いでしょう
+`次のステップ：タグの追加` をクリックします
+
+![06_create_ec2_step4](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/06_create_ec2_step4.png)
+
+### ステップ５：タグの追加
+
+`別のタグを追加` をクリックしキーには `Name` を 値にはわかりやすい名前を設定し `次のステップ：セキュリティグループの設定` をクリックします
+
+![07_create_ec2_step5](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/07_create_ec2_step5.png)
+
+### ステップ６：セキュリティグループの設定
+
+`新しいセキュリティグループを作成する` を選択し、`セキュリティグループ名`、`説明` にはわかりやすいものを入力してください
+最後に `確認と作成` をクリックします
+
+**本来なら `ソース` の部分は `0.0.0.0/0` を設定しないでください（フルオープンになっているため）**
+**自分の家のグローバルIPアドレスなどを設定してSSHのアクセスを絞り込みます**
+
+![08_create_ec2_step6](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/08_create_ec2_step6.png)
+
+### ステップ７：インスタンス作成の確認
+
+表示されている内容に問題が無ければ `起動` をクリックします
+
+![09_create_ec2_step7](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/09_create_ec2_step7.png)
+
+#### キーペア
+
+`新しいキーペアの作成` を選択し `キーペア名` をわかりやすいものを入力し `キーペアのダウンロード` をクリックします
+最後に `インスタンスの作成` をクリックします
+
+**ダウンロードしたキーペアは踏み台サーバーに接続するのに使用します**
+
+![10_create_ec2_key_pair](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/10_create_ec2_key_pair.png)
+
+### インスタンスの作成中
+
+`インスタンスの表示` をクリックします
+
+![11_create_ec2_creating](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/11_create_ec2_creating.png)
+
+### インスタンスの作成後
+
+インスタンスが作成されたことを確認します
+Elastic IPがまだ設定されていないので今後はElastic IPを設定していきます
+
+![12_create_ec2_created](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/12_create_ec2_created.png)
+
+## Elastic IPを作成する
+
+現状だと踏み台サーバーを起動するたびにIPアドレスが変わってしまうので `Elastic IP` を作成しIPアドレスが固定されるようにします
+
+### Elastic IP アドレスの割り当て画面の表示
+
+`Elastic IP アドレスの割り当て` をクリックします
+
+![13_create_eip_open_setting](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/13_create_eip_open_setting.png)
+
+### Elastic IP アドレスの割り当て
+
+特に設定する部分は無いので `割り当て` をクリックします
+
+![14_create_eip_setting](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/14_create_eip_setting.png)
+ 
+### Elastic IP アドレスの割り当て完了
+
+Elastic IP アドレスの割り当てが完了しました
+
+![15_create_eip_created](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/15_create_eip_created.png)
+
+### Elastic IP アドレスに名前を付ける
+
+名前が無くて分かりづらいのでタグを追加して名前が表示されるようにします
+
+#### Elastic IP アドレスの詳細画面を開く
+
+`Actions` をクリックし `詳細を表示` をクリックします
+
+![16_create_eip_open_detail](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/16_create_eip_open_detail.png)
+
+#### Elastic IP アドレスの詳細
+
+`タグの管理` をクリックします
+
+![17_create_eip_tag](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/17_create_eip_tag.png)
+
+#### タグの管理
+
+`キー` に `Name` と `値 - オプション` にはわかりやすい名前を入力してください
+最後に `保存する` をクリックします
+
+![18_create_eip_tag_editing](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/18_create_eip_tag_editing.png)
+
+タグが追加されました
+
+![19_create_eip_tag_edited](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/19_create_eip_tag_edited.png)
+
+## Elastic IP アドレスをEC2 インスタンスに関連付ける
+
+作成した `Elastic IP アドレス` を先程作成した `踏み台サーバー（EC2）` に関連付けします
+
+### Elastic IP アドレスの関連付け画面を開く
+
+`Elastic IP アドレスの関連付け` をクリックします
+
+![19_create_eip_tag_edited](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/19_create_eip_tag_edited.png)
+
+### Elastic IP アドレスの関連付け
+
+インスタンスの項目は先程作成した `EC2インスタンス` を選択してください
+最後に `関連付ける` をクリックします
+
+![20_attach_eip_to_ec2](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/20_attach_eip_to_ec2.png)
+
+### Elastic IP アドレスが関連付けられたか確認する
+
+関連付けられたインスタンスに先程設定したEC2インスタンスが表示されていることが確認できます
+
+![21_attached_eip_to_ec2](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/21_attached_eip_to_ec2.png)
+
+EC2インスタンス画面でも `Elastic IP` に先程作成した `Elastic IP アドレス` が表示されていることが確認できます
+
+![22_attached_eip_on_ec2_dashboard](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/22_attached_eip_on_ec2_dashboard.png)
+
+## 実際に接続してみる
+
+以下のようなコマンドを使用し作成した踏み台サーバーにアクセスできるか確認してください
+
+**キーペアはEC2インスタンスを作成した時、ダウンロードしたものになります**
+
+```shell
+$ ssh -i キーペア ec2–user@ElasticIPアドレス
+```
+
+接続することができたら完了です
+
+![23_connect_to_ec2](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/23_connect_to_ec2.png)
+
+**以上で踏み台サーバーの構築は完了です**
+
+![01_stepping_stone_server](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/stepping_stone_server_construction/01_stepping_stone_server.png)
+
+# RDSの環境構築
+
+RDSにてPostgreSQLのMaster、Slave構成を構築する
+
+## 完成図
+
+構築後は以下のような構成図になります
+
+![01_eroge_release_db_rds](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/01_eroge_release_db_rds.png)
+
+では早速、環境を構築していきます
+
+## DB サブネットグループを作成する
+
+MasterとSlaveをどのサブネットでDBインスタンスを起動するかのための設定になります
+詳しくは以下のドキュメントを確認して下さい
+
+- [VPC の DB インスタンスの使用 - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_VPC.WorkingWithRDSInstanceinaVPC.html#USER_VPC.Subnets)
+
+### DB サブネットグループ作成画面を開く
+
+左のメニューの `サブネットグループ` をクリックし右上の `DB サブネットグループを作成` をクリックします
+
+![02_create_subnet_group](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/02_create_subnet_group.png)
+
+### サブネットグループの詳細
+
+`名前`、`説明`、`VPC` を入力します
+**注意：VPCはデフォルトではなく作成したVPCをちゃんと選択するようにしてください**
+
+![03_create_subnet_group_detail](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/03_create_subnet_group_detail.png)
+
+### サブネットを追加
+
+対象のアベイラビリティーゾーン(`1a` と `1c`)の `Private subnet` を追加します
+最後に `作成` ボタンをクリックして終了です
+
+![04_create_subnet_group_add_subnet](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/04_create_subnet_group_add_subnet.png)
+
+## パラメータグループの作成
+
+RDSはパラメータグループを使用してDBインスタンスの設定を行います
+パラメータグループを使用しないでDBインスタンスを作成するとデフォルトのパラメータグループが使用されます。この**デフォルトのパラメータグループは設定を変更することができない**ので必ず設定することをオススメします  
+
+詳しくは以下のドキュメントを確認して下さい
+
+- [DB パラメータグループを使用する - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_WorkingWithParamGroups.html)
+
+### パラメータグループ作成画面を開く
+
+左のメニューの `パラメータグループ` をクリックし右上の `パラメータグループの作成` をクリックします
+
+![05_create_parameter_group](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/05_create_parameter_group.png)
+
+### パラメータグループの詳細
+
+`パラメータグループファミリー`、`グループ名`、`説明` を入力します
+`パラメータグループファミリー` にはPostgreSQLを選択します
+最後に作成をクリックします
+
+![06_create_paraemter_group_detail](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/06_create_paraemter_group_detail.png)
+
+## RDSへのセキュリティグループを作成
+
+RDSへのセキュリティを高めるために踏み台サーバーからのアクセスのみを許可するセキュリティグループを作成します
+**RDSの設定画面でこのセキュリティグループをアタッチさせます**
+
+### セキュリティグループ作成画面を開く
+
+VPCのコンソール画面を開いて左のメニューの `セキュリティグループ` をクリックし左上の `セキュリティグループの作成` をクリックします
+
+![07_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/07_create_security_group_db.png)
+
+### セキュリティグループの作成
+
+`セキュリティグループ名`、`説明`、`VPC`を入力し `作成` ボタンをクリックします
+**注意：VPCはデフォルトではなく作成したVPCをちゃんと選択するようにしてください**
+
+![08_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/08_create_security_group_db.png)
+
+`閉じる` ボタンをクリックして作成画面を閉じます
+
+![09_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/09_create_security_group_db.png)
+
+### セキュリティグループに名前を付ける
+
+デフォルトだと `name` が空なので `Name` カラムの右端の鉛筆ボタンをクリックしてわかりやすい名前をつけておきます
+
+![10_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/10_create_security_group_db.png)
+
+### インバウンドのルール設定
+
+`インバウンドのルール` タブをクリックして `ルールの編集` をクリックします
+
+![11_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/11_create_security_group_db.png)
+
+画面が遷移したら `ルールの追加` をクリックします
+
+![12_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/12_create_security_group_db.png)
+
+タイプをクリックし `PostgreSQL` と `SSH` を追加します
+ソースの部分には `踏み台サーバーのセキュリティグループ` を選択します  
+
+**踏み台サーバーのセキュリティグループを選択することで踏み台サーバーのセキュリティグループを持つインスタンスからのみアクセスが許可されるようになります**
+
+最後に `説明` を入力して `ルールの保存` をクリックします
+
+![13_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/13_create_security_group_db.png)
+
+`閉じる` ボタンをクリックします
+
+![14_create_security_group_db](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/14_create_security_group_db.png)
+
+以上でセキュリティグループの作成は完了です
+
+## RDSの作成(PostgreSQL)
+
+データベースを作成するための準備が整ったので早速、作成します
+
+### データベースの作成画面を開く
+
+左のメニューの `ダッシュボード` をクリックし下の方の `データベースの作成` をクリックします
+
+![15_create_rds](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/15_create_rds.png)
+
+### データベース作成方法を選択
+
+今回は１つずつ設定していくので `標準作成` を選択します
+
+![16_create_rds_database_create_way](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/16_create_rds_database_create_way.png)
+
+### エンジンのオプション
+
+PostgreSQLのDBを作成するので `PostgreSQL` を選択し `バージョン` も最新のマイナーバージョンのものを選択するとよいでしょう
+
+![17_create_rds_engine](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/17_create_rds_engine.png)
+
+### テンプレート
+
+`無料利用枠` を選択すると `マルチAZ配置` が選択できなくなってしまうので、`開発／テスト` を選択します
+
+![18_create_rds_template](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/18_create_rds_template.png)
+
+### 設定
+
+`DBインスタンス識別子`、`マスターユーザー名`、`マスターパスワード` を入力します
+`DBインスタンス識別子`はコンソール画面上に表示される名前になっています。データベース名では無いので気をつけて下さい  
+
+マスターユーザーについては以下のドキュメントを確認してください
+
+- [マスターユーザーアカウント特権 - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/UsingWithRDS.MasterAccounts.html)
+
+![19_create_rds_settings](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/19_create_rds_settings.png)
+
+### DB インスタンスサイズ
+
+個人で使用するなら料金的に財布に優しい一番スペックの低いものを選びたいですが、`開発／テスト` を選択するとかなりの高スペックが選択されてしまいます
+
+![20_create_rds_db_instance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/20_create_rds_db_instance.png)
+
+`バースト可能クラス (t クラスを含む)` を選択することで財布に優しいスペックのものが選べるようになります
+
+![21_create_rds_db_instance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/21_create_rds_db_instance.png)
+
+### ストレージ
+
+個人で使うならデフォルトのままでいいでしょう
+`マルチAZ配置` 構成なら20GBでだいたい月額5ドルぐらいになるかと思います
+
+![22_create_rds_storage](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/22_create_rds_storage.png)
+
+詳しい料金については以下のドキュメントを確認してください
+
+- [料金 - Amazon RDS for PostgreSQL | AWS](https://aws.amazon.com/jp/rds/postgresql/pricing/?pg=pr&loc=3#Database_Storage)
+
+### 可用性と耐久性
+
+`スタンバイインスタンスを作成する (本稼働環境向けに推奨)` を選択することでマルチAZ配置になります
+**注意：テンプレートを 無料利用枠 にしているとグレーアウトで選択できなくなるので必ず 開発／テスト にすること**
+
+![23_create_rds_availability_and_durability](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/23_create_rds_availability_and_durability.png)
+
+### 接続
+
+`Virtual Private Cloud (VPC)` には対象のVPCを入力してください
+**注意：VPCはデフォルトではなく作成したVPCをちゃんと選択するようにしてください**
+
+`追加の接続設定` をクリックし詳細な情報を入力します
+
+`サブネットグループ` には 先程作成したサブネットグループを選択します  
+
+`パブリックアクセス可能` は `なし` を選択します
+**踏み台サーバー経由でアクセスを可能にさせるため なし を選択します**
+
+`VPC セキュリティグループ` には先程作成したセキュリティグループを選択します  
+
+`データベースポート` はデフォルトのままで大丈夫です
+
+![24_create_rds_connection](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/24_create_rds_connection.png)
+
+### データベース認証
+
+IAMの認証情報を使用してデータベースの認証を行う必要が無ければデフォルトの `パスワード認証` で問題ありません
+詳しくは以下のドキュメントを確認して下さい
+
+- [ユーザーが IAM 認証情報で Amazon RDS に接続できるようにする](https://aws.amazon.com/jp/premiumsupport/knowledge-center/users-connect-rds-iam/)
+
+![25_create_rds_database_certification](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/25_create_rds_database_certification.png)
+
+### 追加設定
+
+追加設定についてそれぞれ説明していきます
+
+![26_create_rds_add_settings](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/26_create_rds_add_settings.png)
+
+#### データベースの選択肢
+
+`最初のデータベース名` を指定することでデータベースを作成した状態でRDSを構築してくれます  
+
+![28_create_rds_add_settings_default_database](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/28_create_rds_add_settings_default_database.png)
+
+`DB パラメータグループ` には先程作成したパラメータグループを指定します
+
+![27_create_rds_add_settings_choise_database](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/27_create_rds_add_settings_choise_database.png)
+
+#### バックアップ
+
+`バックアップウィンドウ` では `選択ウィンドウ` を選択し、`開始時間` を `20:00` に設定しています
+この設定にすることで 朝の5時に30分の間でバックアップを取るようになります
+
+![29_create_rds_add_settings_backup](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/29_create_rds_add_settings_backup.png)
+
+詳しくは以下のドキュメントを確認してください
+
+- [バックアップの使用 - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_WorkingWithAutomatedBackups.html#USER_WorkingWithAutomatedBackups.BackupWindow)
+
+#### Performance Insights
+
+Performance Insightsに関してはデフォルトのままで良いでしょう
+
+![30_create_rds_add_settings_perfomance_insights](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/30_create_rds_add_settings_perfomance_insights.png)
+
+詳しくは以下のドキュメントを確認してください
+
+- [Performance Insights（RDSのパフォーマンスを分析、チューニング）| AWS](https://aws.amazon.com/jp/rds/performance-insights/)
+- [パフォーマンスインサイトの有効化 - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_PerfInsights.Enabling.html)
+
+#### モニタリング
+
+モニタリングに関してはデフォルトのままで良いでしょう
+
+![31_create_rds_add_settings_monitoring](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/31_create_rds_add_settings_monitoring.png)
+
+詳しくは以下のドキュメントを確認してください
+
+- [Amazon RDS​ のモニタリングの概要 - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/MonitoringOverview.html)
+- [拡張モニタリング - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_Monitoring.OS.html)
+
+#### ログのエクスポート
+
+`Pstgresql ログ`、`アップグレードログ` にチェックをいれます
+チェックを入れることで `CloudWatch Logs` で出力されたログを確認することができます
+
+![32_create_rds_add_settings_log_export](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/32_create_rds_add_settings_log_export.png)
+
+ログに関しては以下のドキュメントを確認して下さい
+
+- [Amazon RDS データベースログファイル - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_LogAccess.html)
+- [PostgreSQL データベースのログファイル - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_LogAccess.Concepts.PostgreSQL.html)
+- [Amazon RDS または Aurora for MySQL のログを CloudWatch に公開](https://aws.amazon.com/jp/premiumsupport/knowledge-center/rds-aurora-mysql-logs-cloudwatch/)
+
+#### メンテナンス
+
+`メンテナンスウィンドウ` では `選択ウィンドウ` を選択し、`開始時間` を `18:00` に設定しています
+この設定にすることで 火曜日の朝の3時に30分の間でマイナーバージョンのアップグレードをしてくれるようになります
+
+![33_create_rds_add_settings_maintenance](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/33_create_rds_add_settings_maintenance.png)
+
+マイナーバージョンのアップグレードに関しては以下のドキュメントを確認して下さい
+
+- [DB インスタンス のエンジンバージョンのアップグレード - Amazon Relational Database Service](https://docs.aws.amazon.com/ja_jp/AmazonRDS/latest/UserGuide/USER_UpgradeDBInstance.Upgrading.html#USER_UpgradeDBInstance.Upgrading.AutoMinorVersionUpgrades)
+
+#### 削除保護
+
+チェックをすることでデータベースを削除することができなくなります
+**設定を変更することで削除することができるようになります**
+
+![34_create_rds_add_settings_deletion_protection](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/34_create_rds_add_settings_deletion_protection.png)
+
+### データベースの作成
+
+最後に `概算月間コスト` を確認して、大丈夫そうなら `データベースの作成` ボタンをクリックします
+これでRDS構築完了です！
+
+![35_create_rds_create_button](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/35_create_rds_create_button.png)
+
+料金の詳細については以下のドキュメントを確認してください
+
+- [料金 - Amazon RDS for PostgreSQL | AWS](https://aws.amazon.com/jp/rds/postgresql/pricing/?pg=pr&loc=3)
+
+## 踏み台サーバーからRDSに接続する
+
+### 踏み台サーバーに接続する
+
+以下のようなコマンドを使用し踏み台サーバーにアクセスします
+
+**キーペアはEC2インスタンスを作成した時、ダウンロードしたものになります**
+
+```shell
+$ ssh -i キーペア ec2–user@ElasticIPアドレス
+```
+
+![36_connect_to_ec2](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/36_connect_to_ec2.png)
+
+### RDSに接続する
+
+以下のようなコマンドを使用しRDSにアクセスします
+
+```shell
+$ psql -h RDSのエンドポイント -U マスターユーザー名 データベース名
+```
+
+![37_connect_ec2_to_rds](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/37_connect_ec2_to_rds.png)
+
+アクセスできたら問題ないです
+以降の作業はこちらの画面から行っていきます
+
+## PostgreSQLについて
+
+PostgreSQLで環境構築をするにあたって必要な用語を最低限おさらいします
+
+### データベースクラスタ
+
+データベースクラスタはデータベースの集合になります  
+
+![38_postgresql_database_cluster](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/38_postgresql_database_cluster.png)
+
+RDSで作成した場合はデータベースクラスタに `RDSの設定画面で設定した最初のデータベース`、`postgres`、`rdsadin`、`tempalte0`、`template1` が作成された状態になっています
+
+![28_create_rds_add_settings_default_database](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/28_create_rds_add_settings_default_database.png)
+
+詳しくは以下のドキュメントを確認してください
+
+- [18.2. データベースクラスタの作成](https://www.postgresql.jp/document/11/html/creating-cluster.html)
+
+### データベース
+
+データベースはデータベースオブジェクト（テーブル、ビュー、関数および演算子など）の集合に名前をつけたものです
+
+![39_postgresql_database](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/39_postgresql_database.png)
+
+詳しくは以下のドキュメントを確認してください
+
+- [22.1. 概要](https://www.postgresql.jp/document/11/html/manage-ag-overview.html)
+- [22.2. データベースの作成](https://www.postgresql.jp/document/11/html/manage-ag-createdb.html)
+
+### スキーマ
+
+スキーマはデータベース内のデータベースオブジェクト（テーブル、ビュー、関数および演算子など）をグループ化することができます  
+
+![40_postgresql_schema](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/40_postgresql_schema.png)
+
+詳しくは以下のドキュメントを確認してください
+
+- [5.8. スキーマ](https://www.postgresql.jp/document/11/html/ddl-schemas.html)
+
+### ロールについて
+
+ロールはデータベースへの接続承認を行う。ロールにはデータベースユーザ(データベースへログインするユーザー)とデータベースユーザのグループと分けられます
+
+ロールを作成するSQLには以下の２つがあります  
+２つの違いはLOGIN属性を持つかどうかです 
+
+```sql
+-- データベースユーザーのグループを作成
+CREATE ROLE name;
+-- データベースユーザーを作成
+CREATE USER name;
+```
+
+詳しくは以下のドキュメントを確認してください
+
+- [21.1. データベースロール](https://www.postgresql.jp/document/11/html/database-roles.html)
+- [21.2. ロールの属性](https://www.postgresql.jp/document/11/html/role-attributes.html)
+- [21.3. ロールのメンバ資格](https://www.postgresql.jp/document/11/html/role-membership.html)
+
+## ユーザーとロールの管理を行う
+
+AWSのブログ記事を参考に `ユーザーとロールを管理するためのベストプラクティス` を元に環境を構築していきます  
+以下の２つの記事を参考に作成していきます
+
+- [PostgreSQL ユーザーとロールの管理 | Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/managing-postgresql-users-and-roles/)
+- [Managing PostgreSQL users and roles | AWS Database Blog](https://aws.amazon.com/jp/blogs/database/managing-postgresql-users-and-roles/)
+
+### 目指すべきゴール
+
+![managing-postgresql-users-1](https://d2908q01vomqb2.cloudfront.net/887309d048beef83ad3eabf2a79a64a389ab1c9f/2019/03/01/managing-postgresql-users-1.gif)
+
+> - マスターユーザーを使用して、`readonly` や `readwrite` などのアプリケーションまたはユースケースごとにロールを作成します
+> - これらのロールがさまざまなデータベースオブジェクトにアクセスできるように権限を追加します。例えば、`readonly` ロールは `SELECT` クエリのみを実行できます
+> - 機能にとって最低限必要な権限をロールに付与します
+> - `app_user` や `reporting_user` のように、アプリケーションごとまたは個別の機能ごとに新しいユーザーを作成します
+> - 適切なロールをこれらのユーザーに割り当てて、ロールと同じ権限をすばやく付与します。例えば、`readwrite` ロールを `app_user` に付与し、`readonly` ロールを `reporting_user` に付与します
+> - いつでも、権限を取り消すためにユーザーからロールを削除できます
+
+上記、画像と文章は [PostgreSQL ユーザーとロールの管理 | Amazon Web Services ブログ](https://aws.amazon.com/jp/blogs/news/managing-postgresql-users-and-roles/) より引用
+
+言っていることは `読み取り権限`、`読み取り/書き込み権限` などのグループロールを作成し、それを用途に応じたユーザーに付与する  
+
+### publicスキーマ
+
+**注意：これからの作業は `踏み台サーバー `から `マスターユーザー` で RDS に接続して実行します**
+
+新しくデータベースを作成すると `publicスキーマ` が作成されます  
+テーブルなどのデータベースオブジェクトを作成すると `publicスキーマ` に所属することになります  
+
+新しくユーザーを作成して権限を付与して制限を行っても `publicスキーマ` に作成されてしまうので新しく作成したユーザーが意味のないものになってしまいます  
+`publicスキーマ` への作成権限を取り消す必要があります
+
+PostgreSQLの公式のドキュメントに以下のように書かれています
+
+> 標準SQLには、publicスキーマという概念もありません。 標準に最大限従うためには、publicスキーマは使用すべきではありません。
+
+`publicスキーマ` は使わない方向でいくのが良いでしょう  
+詳しくは以下の公式ドキュメントを確認してください
+
+- [5.8.7. 移植性](https://www.postgresql.jp/document/11/html/ddl-schemas.html#DDL-SCHEMAS-PORTABILITY)
+
+#### publicスキーマを使用できないようにする
+
+以下のSQLを実行して `publicスキーマ` を使用できないようにする
+
+![41_revoke_public_schema](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/41_revoke_public_schema.png)
+
+```sql
+-- public ロールから public スキーマに対するデフォルトの作成権限を取り消す
+REVOKE CREATE ON SCHEMA public FROM PUBLIC;
+
+-- publicロールがデータベースに接続する機能を無効にする
+-- ※eroge_release_dbはデータベース名です
+REVOKE ALL ON DATABASE eroge_release_db FROM PUBLIC;
+```
+
+### スキーマを作成する
+
+本来ならば作成するユーザーごとにスキーマを作成するのが良いのですが今回はスキーマを1つだけ作成してすべてのユーザーはそのスキーマをみるようにします
+
+スキーマのオススメの使用パターンは公式のドキュメントを確認してください
+
+- [5.8.6. 使用パターン](https://www.postgresql.jp/document/11/html/ddl-schemas.html#DDL-SCHEMAS-PATTERNS)
+
+以下のSQLを実行してスキーマを作成します
+
+![42_create_schema](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/42_create_schema.png)
+
+```sql
+-- スキーマの作成
+-- ※eroge_release_db_schemaはスキーマ名です
+CREATE SCHEMA eroge_release_db_schema;
+```
+
+### 読み取り権限ロールを作成する
+
+データの読み取りのみを許可したロールを作成します
+データの更新ができないロールになります  
+
+また今後作成されるテーブルやビューに `readonly` ロールがアクセスできるように権限を自動付与する
+
+以下のSQLを実行します
+
+![43_create_readonly_role](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/43_create_readonly_role.png)
+
+```sql
+-- readonlyという名前のロールを作成(パスワードも権限もないロール)
+CREATE ROLE readonly;
+
+-- readonlyロールはeroge_release_dbへのアクセス権限を付与する
+-- ※eroge_release_dbはデータベース名です
+GRANT CONNECT ON DATABASE eroge_release_db TO readonly;
+
+-- readonlyロールにスキーマへのアクセス権限を付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+GRANT USAGE ON SCHEMA eroge_release_db_schema TO readonly;
+
+-- スキーマ内のすべてのテーブルとビューへのアクセス権限を付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+GRANT SELECT ON ALL TABLES IN SCHEMA eroge_release_db_schema TO readonly;
+
+-- 今後新しいテーブルやビューが作成された時はアクセス権限がない状態になる
+-- なので今後新しいテーブルやビューが作成された時はアクセス権限を自動的に付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+ALTER DEFAULT PRIVILEGES IN SCHEMA eroge_release_db_schema GRANT SELECT ON TABLES TO readonly;
+```
+
+### 読み取り/書き込み権限ロールを作成する
+
+データの読み取りにプラスして書き込みを許可したロールを作成します
+また今後作成されるテーブルやビューに `readwrite` ロールがアクセスできるように権限を自動付与する
+
+以下のSQLを実行します
+
+![44_create_readwrite_role](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/44_create_readwrite_role.png)
+
+```sql
+-- readwriteという名前のロールを作成(パスワードも権限もないロール)
+CREATE ROLE readwrite;
+
+-- readwriteロールはeroge_release_dbへのアクセス権限を付与する
+-- ※eroge_release_dbはデータベース名です
+GRANT CONNECT ON DATABASE eroge_release_db TO readwrite;
+
+-- readwriteロールにスキーマへ新しいObjectを作成する権限を付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+GRANT USAGE, CREATE ON SCHEMA eroge_release_db_schema TO readwrite;
+
+-- スキーマ内のすべてのテーブルとビューへのアクセス権限、及び追加・削除・更新の権限を付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+GRANT SELECT, INSERT, UPDATE, DELETE ON ALL TABLES IN SCHEMA eroge_release_db_schema TO readwrite;
+
+-- 今後新しいテーブルやビューが作成された時はアクセス権限、及び追加・削除・更新の権限がない状態になる
+-- なので今後新しいテーブルやビューが作成された時はアクセス権限、及び追加・削除・更新の権限を自動的に付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+ALTER DEFAULT PRIVILEGES IN SCHEMA eroge_release_db_schema GRANT SELECT, INSERT, UPDATE, DELETE ON TABLES TO readwrite;
+
+-- シーケンスも使用する必要があるためシーケンスへのアクセス権限を付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+GRANT USAGE ON ALL SEQUENCES IN SCHEMA eroge_release_db_schema TO readwrite;
+
+-- 今後新しいシーケンスが作成された時はアクセス権限がない状態になる
+-- なので今後新しいシーケンスが作成された時はアクセス権限を自動的に付与する
+-- ※eroge_release_db_schemaはスキーマ名です
+ALTER DEFAULT PRIVILEGES IN SCHEMA eroge_release_db_schema GRANT USAGE ON SEQUENCES TO readwrite;
+```
+
+### ユーザーを作成しロールを付与する
+
+ログイン用のユーザーを作成し先程作成したロールを付与します
+`読み取り` と `読み取り/書き込み` 用それぞれのユーザーを作成します  
+
+- app_readonly (読み取り)
+- app (読み取り/書き込み)
+
+以下のSQLを実行してください
+
+![45_create_users](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/45_create_users.png)
+
+```sql
+-- readonlyユーザーの作成し 読み取り権限ロール を付与する
+-- ※app_readonlyはユーザー名です、passwordはログインする時のパスワードです
+CREATE USER app_readonly WITH PASSWORD 'password';
+GRANT readonly TO app_readonly;
+
+-- readwriteユーザーの作成し 読み取り/書き込み権限ロール を付与する
+-- ※appはユーザー名です、passwordはログインする時のパスワードです
+CREATE USER app WITH PASSWORD 'password';
+GRANT readwrite TO app;
+```
+
+### ユーザーとロールが作成されたか確認
+
+`app`、`app_readonly` ユーザーが表示され、ロールがそれぞれちゃんと付与されているか以下のSQLを実行して確認してください  
+
+![46_confirmation_user_list](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/46_confirmation_user_list.png)
+
+```sql
+-- 権限の確認SQL
+  SELECT r.rolname
+       , ARRAY(
+                   SELECT b.rolname
+                     FROM pg_catalog.pg_auth_members m
+                     JOIN pg_catalog.pg_roles        b 
+                       ON m.roleid = b.oid
+                    WHERE m.member = r.oid
+               ) AS memberof
+    FROM pg_catalog.pg_roles r
+   WHERE r.rolname NOT IN (
+                               'pg_execute_server_program', 'pg_monitor',           'pg_read_all_settings',
+                               'pg_read_all_stats',         'pg_read_server_files', 'pg_stat_scan_tables',
+                               'pg_write_server_files',     'rds_ad',               'rdsadmin',                  
+                               'rds_password',              'pg_signal_backend',    'rds_iam',                   
+                               'rds_replication',           'rdsrepladmin',         'rds_superuser'
+                          )
+ORDER BY r.rolname;
+```
+
+### デフォルトのsearch_pathを変更する
+
+デフォルトの `search_path` 設定だと作成した `eroge_release_db_schema` 名を省略してテーブルの検索をすることができません
+`search_path` 設定を変更して`eroge_release_db_schema` 名を省略してもテーブルの検索をできるようにします  
+**eroge_release_db_schema を作成したスキーマ名に置き換えてください**
+
+search_pathについて詳しくは以下のドキュメントを確認してください
+
+- [5.8.3. スキーマ検索パス](https://www.postgresql.jp/document/11/html/ddl-schemas.html#DDL-SCHEMAS-PATH)
+
+#### デフォルトのsearch_pathを確認する
+
+以下のSQLを実行します
+
+![47_default_search_path](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/47_default_search_path.png)
+
+```sql
+SHOW search_path;
+```
+
+デフォルトの状態だと `ログインユーザー名` と同じスキーマ名を探しに行き、無かったら `public` スキーマで探すようになっています
+search_pathに `eroge_release_db_schema` を追加することで省略してテーブルの検索をすることができます
+
+現在のカレントスキーマを確認すると `public` になっています
+
+![48_default_current_schema](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/48_default_current_schema.png)
+
+スキーマ名を省略してテーブルを検索してみると下記のようにエラーになります
+
+![49_select_game_casts_table_fail](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/49_select_game_casts_table_fail.png)
+
+#### DB パラメータグループからsearch_pathを変更する
+
+作成した `DB パラメータグループ` を選択し、編集します
+
+![50_edit_db_parameter_group](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/50_edit_db_parameter_group.png)
+
+パラメータに `search_path` を入力し 値の部分に `'$user',eroge_release_db_schema` と入力し `変更のプレビュー` をクリックします
+
+![51_input_db_parameter_group](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/51_input_db_parameter_group.png)
+
+新しい値が `'$user',eroge_release_db_schema` になっていることを確認したら `変更の保存` をクリックします
+
+![52_save_db_parameter_group](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/52_save_db_parameter_group.png)
+
+#### 変更されたsearch_pathを確認する
+
+以下のSQLを実行します
+
+![53_after_change_search_path](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/53_after_change_search_path.png)
+
+```sql
+SHOW search_path;
+```
+
+DB パラメータグループで変更した値になっていることを確認します
+現在のカレントスキーマも確認すると `eroge_release_db_schema` になっています
+
+![54_after_change_schema](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/54_after_change_schema.png)
+
+スキーマ名を省略してテーブルを検索してみるとエラーにならず表示されたことを確認できます
+
+![55_select_game_casts_table_success](https://raw.githubusercontent.com/dodonki1223/image_garage/master/eroge_release_db/db_construction/55_select_game_casts_table_success.png)
+
+**以上でRDSの構築は完了です**
+
+# 最後に
+
+本来ならば [AWS CDK](https://github.com/aws/aws-cdk) や [Terraform](https://www.terraform.io/) などを使用しインフラのコード化をするべきですがまずはAWSのコンソール画面から作ってみました
+良かったこととして時間はかかりましたが全体像が把握できましたし取っ掛かりとしてはすごく良かったです
+いずれ今回作成した環境もコード化していきたいと思います！
