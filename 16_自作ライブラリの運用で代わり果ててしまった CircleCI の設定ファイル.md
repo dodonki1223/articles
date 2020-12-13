@@ -6,9 +6,23 @@
 
 [QiitaTrend](https://github.com/dodonki1223/qiita_trend) は Qiitaのトレンド情報（Daily、Weekly、Monthly）を10秒で取得することができる gem になります。
 
-# 大雑把な年表
+# config.yml の大まかな年表
 
-どういった事で CircleCI の 設定ファイル config.yml が変わっていったのかざっくりとまとめました
+CircleCI の config.yml を今まででたくさん更新してきました。
+運用してきた config.yml は厳密にはもっと修正が細かいですが大まかに分けると以下のような修正履歴になります。
+
+| 年月     | 変更内容                                      |
+|:--------:|:----------------------------------------------|
+| 2019/08  | CircleCIの導入                                |
+| 2019/08  | YARD でドキュメントが自動生成されるように変更 |
+| 2019/08  | ワークフローを導入                            |
+| 2019/12  | CircleCI2.1へバージョンアップ                 |
+| 2020/02  | workspace 機能の導入                          |
+| 2020/04  | slack 通知・デプロイ承認機能追加              |
+| 2020/08  | 毎日テストを実行させるワークフローを追加      |
+| 2020/10  | CircleCI のイメージを次世代のものに変更       |
+| 2020/11  | Ruby の orb の導入                            |
+
 
 # 2019年8月：初じめてのCircleCI
 
@@ -1235,6 +1249,214 @@ slack 通知とデプロイの承認機能を追加した config.yml です。
 <div>
 
 ```yml
+version: 2.1
+orbs:
+  slack: circleci/slack@3.4.2
+executors:
+  base:
+    docker:
+      - image: circleci/ruby:2.6.0
+        environment:
+          # Bundlerのパス設定が書き換えられ`vendor/bundle`ではなくて`/usr/local/bundle`を参照してしまい`bundle exec`でエラーになる
+          # Bundlerのconfigファイル(pathの設定がされたもの)をworkspaceで永続化し`vendor/bundle`を参照するようにするための設定
+          BUNDLE_APP_CONFIG: .bundle
+    working_directory: ~/dodonki1223/qiita_trend
+
+commands:
+  install-bundler:
+    steps:
+      - run:
+          name: Install bundler(2.1.0)
+          command: gem install bundler:2.1.0
+
+  # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+  restore-gem-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "Gemfile.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+  install-gem:
+    steps:
+      - run:
+          name: Install gem
+          command: |
+            # jobs=4は並列処理をして高速化するための設定（４つのjobで実行するって意味）
+            bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3
+
+  save-gem-cache:
+    steps:
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+  save-workspace:
+    steps:
+      - persist_to_workspace:
+          # working_directory からの相対パスか絶対パスを指定します
+          root: .
+          paths: .
+
+  using-workspace:
+    steps:
+      - attach_workspace:
+          # working_directory からの相対パスか絶対パスを指定します
+          at: .
+
+  run-rubocop:
+    steps:
+      - run:
+          name: Run RuboCop
+          command: |
+            bundle exec rubocop
+
+  run-tests:
+    steps:
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec \
+              --format progress \
+              --format RspecJunitFormatter \
+              --out test_results/rspec.xml \
+              --format progress \
+              $TEST_FILES
+
+  collect-reports:
+    steps:
+      # ref:https://circleci.com/docs/ja/2.0/configuration-reference/#store_test_results
+      - store_test_results:
+          path: test_results
+      - store_artifacts:
+          # テスト結果をtest-resultsディレクトリに吐き出す
+          path: test_results
+          destination: test-results
+      - store_artifacts:
+          # カバレッジの結果をcoverage-resultsディレクトリに吐き出す
+          path: coverage
+          destination: coverage-results
+
+  create-document:
+    steps:
+      - run:
+          name: Create document
+          command: |
+            bundle exec yard
+      - store_artifacts:
+          # ドキュメントの結果をyard-resultsディレクトリに吐き出す
+          path: ./doc
+          destination: yard-results
+
+  deploy-rubygems:
+    steps:
+      # ref:https://support.circleci.com/hc/ja/articles/115015628247-%E6%8E%A5%E7%B6%9A%E3%82%92%E7%B6%9A%E8%A1%8C%E3%81%97%E3%81%BE%E3%81%99%E3%81%8B-%E3%81%AF%E3%81%84-%E3%81%84%E3%81%84%E3%81%88-
+      # read/write両方の権限が必要
+      - add_ssh_keys:
+          fingerprints:
+            - "38:d2:72:5e:9f:67:93:9a:ec:95:94:a2:0e:bf:41:9e"
+
+      # ref:https://circleci.com/docs/2.0/gh-bb-integration/#establishing-the-authenticity-of-an-ssh-host
+      - run:
+          name: Avoid hosts unknown for github
+          command: |
+            mkdir -p ~/.ssh
+            echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+                  bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+                  ' >> ~/.ssh/known_hosts
+
+      - run:
+          name: Deploy RubyGems
+          command: |
+            curl -u dodonki1223:$RUBYGEMS_PASSWORD https://rubygems.org/api/v1/api_key.yaml > ~/.gem/credentials
+            chmod 0600 ~/.gem/credentials
+            git config user.name dodonki1223
+            git config user.email $RUBYGEMS_EMAIL
+            bundle exec rake build
+            bundle exec rake release
+
+  deploy-notification:
+    steps:
+      - slack/status:
+          success_message: ':circleci-pass: RubyGemsにデプロイが完了しました\n:github_octocat: User: $CIRCLE_USERNAME'
+          failure_message: ':circleci-fail: RubyGemsにデプロイが失敗しました\n:github_octocat: User: $CIRCLE_USERNAME'
+
+jobs:
+  setup:
+    executor: base
+    steps:
+      - checkout
+      - install-bundler
+      - restore-gem-cache
+      - install-gem
+      - save-gem-cache
+      - save-workspace
+
+  lint:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - run-rubocop
+
+  test:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - run-tests
+      - collect-reports
+
+  document:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - create-document
+
+  deploy:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - deploy-rubygems
+      - deploy-notification
+
+workflows:
+  version: 2.1
+  main:
+    jobs:
+      - setup
+      - lint:
+          requires:
+            - setup
+      - test:
+          requires:
+            - setup
+      - document:
+          requires:
+            - setup
+      - slack/approval-notification:
+          message: ':circleci-pass: RubyGemsへのデプロイ準備が整っています\n:github_octocat: User: $CIRCLE_USERNAME\nデプロイを実行する場合は *Approve* を押してください'
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              only: master
+      - approval-job:
+          type: approval
+          requires:
+            - slack/approval-notification
+      - deploy:
+          requires:
+            - approval-job
+          filters:
+            branches:
+              only: master
 ```
 
 </div>
@@ -1304,7 +1526,7 @@ workflows:
       ・
 ```
 
-# 2020年8月：毎日テストを実行させる
+# 2020年8月：毎日テストを実行させるワークフローを追加
 
 [QiitaTrend](https://github.com/dodonki1223/qiita_trend) という gem は Qiita のサイトをスクレイピングしているため、DOM の構成が変わるとエラーで落ちてしまいます。
 いつの間にかテストが落ちていることが何度かあり gem が使用できなくなることがあった。
@@ -1321,6 +1543,234 @@ workflows:
 <div>
 
 ```yml
+version: 2.1
+orbs:
+  slack: circleci/slack@3.4.2
+executors:
+  base:
+    docker:
+      - image: circleci/ruby:2.6.0
+        auth:
+          username: dodonki1223
+          password: $DOCKERHUB_PASSWORD
+        environment:
+          # Bundlerのパス設定が書き換えられ`vendor/bundle`ではなくて`/usr/local/bundle`を参照してしまい`bundle exec`でエラーになる
+          # Bundlerのconfigファイル(pathの設定がされたもの)をworkspaceで永続化し`vendor/bundle`を参照するようにするための設定
+          BUNDLE_APP_CONFIG: .bundle
+          # ref: https://circleci.com/docs/2.0/faq/#how-can-i-set-the-timezone-in-docker-images
+          TZ: "Asia/Tokyo"
+    working_directory: ~/dodonki1223/qiita_trend
+
+commands:
+  install-bundler:
+    steps:
+      - run:
+          name: Install bundler(2.1.0)
+          command: gem install bundler:2.1.0
+
+  # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+  restore-gem-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "Gemfile.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+  install-gem:
+    steps:
+      - run:
+          name: Install gem
+          command: |
+            # jobs=4は並列処理をして高速化するための設定（４つのjobで実行するって意味）
+            bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3
+
+  save-gem-cache:
+    steps:
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+  save-workspace:
+    steps:
+      - persist_to_workspace:
+          # working_directory からの相対パスか絶対パスを指定します
+          root: .
+          paths: .
+
+  using-workspace:
+    steps:
+      - attach_workspace:
+          # working_directory からの相対パスか絶対パスを指定します
+          at: .
+
+  run-rubocop:
+    steps:
+      - run:
+          name: Run RuboCop
+          command: |
+            bundle exec rubocop
+
+  run-tests:
+    steps:
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec \
+              --format progress \
+              --format RspecJunitFormatter \
+              --out test_results/rspec/rspec.xml \
+              --format progress \
+              $TEST_FILES
+
+  collect-reports:
+    steps:
+      # ref:https://circleci.com/docs/ja/2.0/configuration-reference/#store_test_results
+      - store_test_results:
+          path: test_results
+      - store_artifacts:
+          # テスト結果をtest-resultsディレクトリに吐き出す
+          path: test_results
+          destination: test-results
+      - store_artifacts:
+          # カバレッジの結果をcoverage-resultsディレクトリに吐き出す
+          path: coverage
+          destination: coverage-results
+
+  create-document:
+    steps:
+      - run:
+          name: Create document
+          command: |
+            bundle exec yard
+      - store_artifacts:
+          # ドキュメントの結果をyard-resultsディレクトリに吐き出す
+          path: ./doc
+          destination: yard-results
+
+  deploy-rubygems:
+    steps:
+      # ref:https://support.circleci.com/hc/ja/articles/115015628247-%E6%8E%A5%E7%B6%9A%E3%82%92%E7%B6%9A%E8%A1%8C%E3%81%97%E3%81%BE%E3%81%99%E3%81%8B-%E3%81%AF%E3%81%84-%E3%81%84%E3%81%84%E3%81%88-
+      # read/write両方の権限が必要
+      - add_ssh_keys:
+          fingerprints:
+            - "38:d2:72:5e:9f:67:93:9a:ec:95:94:a2:0e:bf:41:9e"
+
+      # ref:https://circleci.com/docs/2.0/gh-bb-integration/#establishing-the-authenticity-of-an-ssh-host
+      - run:
+          name: Avoid hosts unknown for github
+          command: |
+            mkdir -p ~/.ssh
+            echo 'github.com ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAq2A7hRGmdnm9tUDbO9IDSwBK6TbQa+PXYPCPy6rbTrTtw7PHkccKrpp0yVhp5HdEIcKr6pLlVDBfOLX9QUsyCOV0wzfjIJNlGEYsdlLJizHhbn2mUjvSAHQqZETYP81eFzLQNnPHt4EVVUh7VfDESU84KezmD5QlWpXLmvU31/yMf+Se8xhHTvKSCZIFImWwoG6mbUoWf9nzpIoaSjB+weqqUUmpaaasXVal72J+UX2B+2RPW3RcT0eOzQgqlJL3RKrTJvdsjE3JEAvGq3lGHSZXy28G3skua2SmVi/w4yCE6gbODqnTWlg7+wC604ydGXA8VJiS5ap43JXiUFFAaQ==
+                  bitbucket.org ssh-rsa AAAAB3NzaC1yc2EAAAABIwAAAQEAubiN81eDcafrgMeLzaFPsw2kNvEcqTKl/VqLat/MaB33pZy0y3rJZtnqwR2qOOvbwKZYKiEO1O6VqNEBxKvJJelCq0dTXWT5pbO2gDXC6h6QDXCaHo6pOHGPUy+YBaGQRGuSusMEASYiWunYN0vCAI8QaXnWMXNMdFP3jHAJH0eDsoiGnLPBlBp4TNm6rYI74nMzgz3B9IikW4WVK+dc8KZJZWYjAuORU3jc1c/NPskD2ASinf8v3xnfXeukU0sJ5N6m5E8VLjObPEO+mN2t/FZTMZLiFqPWc/ALSqnMnnhwrNi2rbfg/rd/IpL8Le3pSBne8+seeFVBoGqzHM9yXw==
+                  ' >> ~/.ssh/known_hosts
+
+      - run:
+          name: Deploy RubyGems
+          command: |
+            curl -u dodonki1223:$RUBYGEMS_PASSWORD https://rubygems.org/api/v1/api_key.yaml > ~/.gem/credentials
+            chmod 0600 ~/.gem/credentials
+            git config user.name dodonki1223
+            git config user.email $RUBYGEMS_EMAIL
+            bundle exec rake build
+            bundle exec rake release
+
+  deploy-notification:
+    steps:
+      - slack/status:
+          success_message: ':circleci-pass: RubyGemsにデプロイが完了しました\n:github_octocat: User: $CIRCLE_USERNAME'
+          failure_message: ':circleci-fail: RubyGemsにデプロイが失敗しました\n:github_octocat: User: $CIRCLE_USERNAME'
+
+jobs:
+  setup:
+    executor: base
+    steps:
+      - checkout
+      - install-bundler
+      - restore-gem-cache
+      - install-gem
+      - save-gem-cache
+      - save-workspace
+
+  lint:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - run-rubocop
+
+  test:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - run-tests
+      - collect-reports
+
+  document:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - create-document
+
+  deploy:
+    executor: base
+    steps:
+      - using-workspace
+      - install-bundler
+      - deploy-rubygems
+      - deploy-notification
+
+workflows:
+  version: 2.1
+  main:
+    jobs:
+      - setup
+      - lint:
+          requires:
+            - setup
+      - test:
+          requires:
+            - setup
+      - document:
+          requires:
+            - setup
+      - slack/approval-notification:
+          message: ':circleci-pass: RubyGemsへのデプロイ準備が整っています\n:github_octocat: User: $CIRCLE_USERNAME\nデプロイを実行する場合は *Approve* を押してください'
+          requires:
+            - lint
+            - test
+          filters:
+            branches:
+              only: master
+      - approval-job:
+          type: approval
+          requires:
+            - slack/approval-notification
+      - deploy:
+          requires:
+            - approval-job
+          filters:
+            branches:
+              only: master
+  # 定期でテストを実行する
+  # ref:https://circleci.com/docs/ja/2.0/triggers/
+  nightly:
+    triggers:
+      - schedule:
+          cron: "0 22 * * *" # UTCで記述
+          filters:
+            branches:
+              only:
+                - master
+    jobs:
+      - setup
+      - test:
+          requires:
+            - setup
 ```
 
 </div>
@@ -1379,6 +1829,111 @@ cimg に変更した config.yml
 <div>
 
 ```yml
+version: 2.1
+orbs:
+  slack: circleci/slack@3.4.2
+executors:
+  base:
+    docker:
+      - image: cimg/ruby:2.6.6
+        auth:
+          username: dodonki1223
+          password: $DOCKERHUB_PASSWORD
+        environment:
+          # Bundlerのパス設定が書き換えられ`vendor/bundle`ではなくて`/usr/local/bundle`を参照してしまい`bundle exec`でエラーになる
+          # Bundlerのconfigファイル(pathの設定がされたもの)をworkspaceで永続化し`vendor/bundle`を参照するようにするための設定
+          BUNDLE_APP_CONFIG: .bundle
+          # ref: https://circleci.com/docs/2.0/faq/#how-can-i-set-the-timezone-in-docker-images
+          TZ: "Asia/Tokyo"
+    working_directory: ~/dodonki1223/qiita_trend
+
+commands:
+  install-bundler:
+    steps:
+      - run:
+          name: Install bundler(2.1.0)
+          command: gem install bundler:2.1.0
+
+  # Read about caching dependencies: https://circleci.com/docs/2.0/caching/
+  restore-gem-cache:
+    steps:
+      - restore_cache:
+          keys:
+            - v1-dependencies-{{ checksum "Gemfile.lock" }}
+            # fallback to using the latest cache if no exact match is found
+            - v1-dependencies-
+
+  install-gem:
+    steps:
+      - run:
+          name: Install gem
+          command: |
+            # jobs=4は並列処理をして高速化するための設定（４つのjobで実行するって意味）
+            bundle check --path=vendor/bundle || bundle install --path=vendor/bundle --jobs=4 --retry=3
+
+  save-gem-cache:
+    steps:
+      - save_cache:
+          paths:
+            - ./vendor/bundle
+          key: v1-dependencies-{{ checksum "Gemfile.lock" }}
+
+  save-workspace:
+    steps:
+      - persist_to_workspace:
+          # working_directory からの相対パスか絶対パスを指定します
+          root: .
+          paths: .
+
+  using-workspace:
+    steps:
+      - attach_workspace:
+          # working_directory からの相対パスか絶対パスを指定します
+          at: .
+
+  run-rubocop:
+    steps:
+      - run:
+          name: Run RuboCop
+          command: |
+            bundle exec rubocop
+
+  run-tests:
+    steps:
+      - run:
+          name: Run tests
+          command: |
+            TEST_FILES="$(circleci tests glob "spec/**/*_spec.rb" | circleci tests split --split-by=timings)"
+            bundle exec rspec \
+              --format progress \
+              --format RspecJunitFormatter \
+              --out test_results/rspec/rspec.xml \
+              --format progress \
+              $TEST_FILES
+
+  collect-reports:
+    steps:
+      # ref:https://circleci.com/docs/ja/2.0/configuration-reference/#store_test_results
+      - store_test_results:
+          path: test_results
+      - store_artifacts:
+          # テスト結果をtest-resultsディレクトリに吐き出す
+          path: test_results
+          destination: test-results
+      - store_artifacts:
+          # カバレッジの結果をcoverage-resultsディレクトリに吐き出す
+          path: coverage
+          destination: coverage-results
+
+  create-document:
+    steps:
+      - run:
+          name: Create document
+          command: |
+            bundle exec yard
+      - store_artifacts:
+          # ドキュメントの結果をyard-resultsディレクトリに吐き出す
+          path: ./doc
           destination: yard-results
 
   deploy-rubygems:
@@ -1861,4 +2416,4 @@ jobs:
 
 CircleCI で CI/CD を設定して運用してきたが自分の学びが多く、実装してすごく良かったと思う。
 個人で CircleCI を運用することはすごく勉強になるので個人的にはすごくオススメします。
-これからもこの設定ファイルを運用していき、気になった機能が増えたらすぐに実装していきます！
+これからもこの設定ファイルを運用していき、気になった機能が増えたらすぐに実装していきたいと思います！
