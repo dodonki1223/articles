@@ -31,6 +31,8 @@
 初めて導入した config.yml は以下です。今、見るととても簡素なものですね（笑）
 version2.1 ではないし、workflow も組んでいませんね。
 
+![00_add_first_circleci](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/00_add_first_circleci.png)
+
 <details>
 <summary>config.yml</summary>
 <div>
@@ -240,6 +242,8 @@ jobs:
 
 ドキュメントを自動生成する処理を追加した config.yml です。
 
+![01_add_create_document](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/01_add_create_document.png)
+
 <details>
 <summary>config.yml</summary>
 <div>
@@ -381,6 +385,8 @@ YARD の作成処理と作成した YARD のアップロード機能を追加。
 ## config.yml
 
 ワークフローの設定を追加した config.yml です。
+
+![02_add_workflows](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/02_add_workflows.png)
 
 <details>
 <summary>config.yml</summary>
@@ -578,6 +584,8 @@ workflows:
 ## config.yml
 
 バージョンを 2.0 から 2.1 に変更した config.yml です。
+
+![03_update_version2_1](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/03_update_version2_1.png)
 
 <details>
 <summary>config.yml</summary>
@@ -946,6 +954,10 @@ workflows:
 
 ## config.yml
 
+workspace を追加し job 間でキャッシュを使えるようにした config.yml です。
+
+![04_add_workspace](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/04_add_workspace.png)
+
 <details>
 <summary>config.yml</summary>
 <div>
@@ -1214,6 +1226,10 @@ jobs:
 
 ## config.yml
 
+slack 通知とデプロイの承認機能を追加した config.yml です。
+
+![05_slack_notify](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/05_slack_notify.png)
+
 <details>
 <summary>config.yml</summary>
 <div>
@@ -1227,6 +1243,8 @@ jobs:
 ## 更新内容
 
 orbs に slack を追加し承認のプロセスを slack に通知したり、デプロイ完了後に slack に通知させる機能を追加した。
+
+![05_01_slack_notify_sample](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/05_01_slack_notify_sample.png)
 
 ### orbs に slack を追加
 
@@ -1291,7 +1309,12 @@ workflows:
 [QiitaTrend](https://github.com/dodonki1223/qiita_trend) という gem は Qiita のサイトをスクレイピングしているため、DOM の構成が変わるとエラーで落ちてしまいます。
 いつの間にかテストが落ちていることが何度かあり gem が使用できなくなることがあった。
 **DOM の構成が変わったことをいち早く検知** する必要があったため **毎日テストを実行する** ように修正。
+
 ## config.yml
+
+テストが定期実行するように設定を追加した config.yml です。
+
+![06_triggered_execute](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/06_triggered_execute.png)
 
 <details>
 <summary>config.yml</summary>
@@ -1336,11 +1359,20 @@ workflows:
 - テストが何度か落ちて、DOMの構成が変わったことをいち早く検知することができるようになった
 - テストが落ちた時は CircleCI と slack を連携させているため通知が来てすぐに検知が可能
 
+![06_01_error_sample](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/06_01_error_sample.png)
+
+こんな感じでエラーが slack に通知される
+
+
 # 2020年10月：CircleCI のイメージを次世代ものに変更
 
 [CircleCI実践入門──CI/CDがもたらす開発速度と品質の両立](https://www.amazon.co.jp/CircleCI%E5%AE%9F%E8%B7%B5%E5%85%A5%E9%96%80%E2%94%80%E2%94%80CI-CD%E3%81%8C%E3%82%82%E3%81%9F%E3%82%89%E3%81%99%E9%96%8B%E7%99%BA%E9%80%9F%E5%BA%A6%E3%81%A8%E5%93%81%E8%B3%AA%E3%81%AE%E4%B8%A1%E7%AB%8B-WEB-PRESS-plus/dp/4297114119) の本が発売されたので読んでみると cimg という次世代の image があることを知り、こちらを導入することにした。
 
 ## config.yml
+
+cimg に変更した config.yml
+
+![07_change_cimg](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/07_change_cimg.png)
 
 <details>
 <summary>config.yml</summary>
@@ -1505,6 +1537,10 @@ executors:
 Ruby の orb を使用することで自前で実装していた処理を orb で提供された command 使用することができるようになり記述の簡略化ができるようになった。
 
 ## config.yml
+
+Ruby の orb に寄せた config.yml です。
+
+![08_change_ruby_orb](https://raw.githubusercontent.com/dodonki1223/image_garage/master/qiita_articles/16/08_change_ruby_orb.png)
 
 <details>
 <summary>config.yml</summary>
