@@ -835,8 +835,8 @@ $ crontab -e
 
 ```shell
 # cronの結果を確認する時は下記コマンドを実行しよう
-# cat /var/mail/takagiyuuki
-# tail -f -n 1000 /var/mail/takagiyuuki
+# cat /var/mail/dodonki1223
+# tail -f -n 1000 /var/mail/dodonki1223
 
 # 毎日１７時３０分にQiitaのトレンドをSlackに通知する
 30 17 * * * /bin/bash -cl 'cd $HOME/.tool/qiita_trend_slack_notifier/ && ruby notify_trend.rb'
@@ -845,7 +845,7 @@ $ crontab -e
 # 下記のようなエラーが発生してハマったよOrz
 
 # stty: stdin isn't a terminal
-# /Users/takagiyuuki/.tool/eroge_release_cmd/vendor/bundle/ruby/2.6.0/gems/inifile-3.0.0/lib/inifile.rb:522:in `===': invalid byte sequence in US-ASCII (ArgumentError)
+# /Users/dodonki1223/.tool/eroge_release_cmd/vendor/bundle/ruby/2.6.0/gems/inifile-3.0.0/lib/inifile.rb:522:in `===': invalid byte sequence in US-ASCII (ArgumentError)
 
 # cronでプログラムを実行するときのlocaleとローカルPCのlocaleが合わなかったため上記のエラーが発生した
 # US-ASCIIだと日本語が解釈されずに落ちた的な……
