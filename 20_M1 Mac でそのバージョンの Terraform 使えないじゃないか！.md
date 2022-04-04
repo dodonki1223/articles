@@ -1,3 +1,5 @@
+# M1 Mac でそのバージョンの Terraform 使えないじゃないか！
+
 Terraform で **バージョン 0.12.5** を使って勉強するぞと思ったが M1 Mac で動かないじゃないか！
 どうしたらいいんや……と困っていた時に解決した方法になります。
 
@@ -115,6 +117,20 @@ exec /opt/homebrew/opt/asdf/libexec/bin/asdf exec "terraform" "$@"
 $ asdf list terraform
   0.12.5
   1.1.0
+```
+
+Terraform のコマンドを実行して 0.12.5 が使えるか確認する。
+
+```shell
+# グローバルで使用する terraform のバージョンを 0.12.5 にする
+$ asdf global terraform 0.12.5
+
+# terraform のバージョンを確認する
+$ terraform -v
+Terraform v0.12.5
+
+Your version of Terraform is out of date! The latest version
+is 1.1.7. You can update by downloading from www.terraform.io/downloads.html
 ```
 
 これでインストール完了です。お疲れさまでした。
