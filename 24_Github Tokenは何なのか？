@@ -1,0 +1,109 @@
+# GitHub Token とは何なのか？
+
+この記事を読むことで解決したいこと？
+- Github Token を使って認証ができるようになること
+- いろいろなユースケースにおける Github Token を理解し適切に扱えるようになること
+- 認証時にエラーがでて失敗したときにこちらの記事を読んでトラブルシュートができるようになること
+- GtiHub Actions で認証が通らない時の確認方法
+
+## GitHub Token とは何か？
+
+命名がいくつかあり、あたまが混乱するのでなんのかをここで説明する
+
+## GitHub Token は何を制御するのか？
+
+結局なんのためにある機能なのか。何を制御するのか。またあると何が嬉しいのか？
+
+## GitHub Token の種類
+
+GitHub Apps における トークンと GitHub Actions におけるトークン
+
+
+
+
+
+## 自動トークン認証の話
+- GitHub Actions で使用されるトークンの話
+    - https://docs.github.com/ja/actions/security-guides/automatic-token-authentication#permissions-for-the-github_token
+
+- トークンの生存期間は？
+- デフォルトであたっているトークンについて
+- トークンの制御をもう少し厳格に行う場合
+
+## 認証が通らない。どうやって確認すればいいのか？
+
+
+## Nice to have
+
+- GitHub Token の作成方法
+
+GitHub のトークンフォーマット
+- https://docs.github.com/ja/authentication/keeping-your-account-and-data-secure/about-authentication-to-github#github-%E3%81%AE%E3%83%88%E3%83%BC%E3%82%AF%E3%83%B3%E3%83%95%E3%82%A9%E3%83%BC%E3%83%9E%E3%83%83%E3%83%88
+
+
+
+## 基本的な指針は？
+- GitHub App の installation Access Token を使用して細かく制御して認証できるようにする
+- 一部対応できていないものに関しては 自動トークン認証を使って行う
+
+なぜ IAT を使うべきかはChatGPT4が教えてくれた
+```
+GitHub Appsのインストールアクセストークン（Installation Access Token）をPersonal Access Token（PAT）に代わって使用することが望ましいとされる理由には、セキュリティ、スコープの精密な管理、自動化の容易さなど、複数の利点があります。以下にそれぞれの理由を詳細に説明します。
+
+1. セキュリティ
+限定的なアクセス: GitHub Appsは、必要な機能にのみアクセスするように権限を厳密に制限できます。例えば、特定のリポジトリのIssuesにのみアクセスしたい場合、その権限だけをGitHub Appに与えることができます。これに対し、Personal Access Tokenは生成したユーザーの権限を全て引き継ぎます。ユーザーが広範な権限を持っている場合、それに伴うリスクも大きくなります。
+セキュリティの運用: GitHub Appsのトークンは、使用するたびに動的に生成され、短い有効期限が設定されています。これにより、古いトークンが漏洩しても被害を最小限に抑えることができます。一方、Personal Access Tokenは手動で無効にするまで有効であり、漏洩時のリスクが高くなります。
+
+2. スコープの精密な管理
+リソースへの制限付きアクセス: GitHub Appsはインストールされる際に、どのリポジトリにアクセスできるかを選択できます。これにより、アクセスを必要とするリポジトリのみに限定することが可能です。一方、Personal Access Tokenは、特定のリポジトリやアクションに対するアクセス制限を設けることができません。
+細かい権限設定: GitHub Appsでは、読み取り専用アクセス、書き込みアクセスなど、必要な操作に応じて細かく権限を設定できます。この柔軟性により、不要な権限を避け、最小限の権限で操作を行うことが可能です。
+
+3. 自動化と統合の容易さ
+アプリケーションとしての管理: GitHub AppsはアプリケーションとしてGitHubに登録されるため、組織や開発チーム内での統合が容易になります。複数のリポジトリや異なる環境で統一的にアクセス制御を行うことが可能です。
+自動化の支援: GitHub AppsはCI/CDパイプラインや他の自動化されたワークフローとの統合に最適です。アプリケーションが必要とする権限に基づいてトークンを自動的に発行し、特定のタスクを実行することができます。
+これらの利点により、特に企業や大規模なプロジェクトでの使用では、GitHub Appsの利用がPersonal Access Tokenに比べて好まれます。安全性、管理の容易さ、自動化の支援といった点で、GitHub Appsはより適した選択肢となるのです。
+```
+
+これはどうなる？基本的には以下の方針にすべし
+
+```
+GitHub ActionsとGitHub Appsの間で使用される認証トークンにはいくつかの重要な違いがあります。これらの違いを理解することは、適切な認証メカニズムを選択し、セキュリティとアクセス権限を最適に管理する上で役立ちます。
+
+GitHub Actionsの自動認証トークン
+GitHub Actionsでは、GITHUB_TOKENと呼ばれる自動生成される認証トークンが提供されます。このトークンは、ワークフローが実行される際にGitHubによって自動的に作成され、ワークフローが完了すると期限切れになります。主な特徴は以下の通りです：
+
+自動生成: 各ワークフローの実行時に自動的に生成され、ワークフロー終了時に無効化されます。
+スコープ: GITHUB_TOKENはそのリポジトリ内でのアクション（イシュー操作、プルリクエストのコメント追加、コミットステータスの更新など）を実行するための権限を持っています。このトークンのスコープはリポジトリ固有であり、ワークフローで定義されたパーミッションに基づいています。
+制限: このトークンはリポジトリ固有であり、他のリポジトリや組織全体のデータにアクセスする権限はありません。
+GitHub AppのInstallation Access Token
+GitHub Appsを使用する際には、特定のGitHub Appに紐付けられたInstallation Access Tokenが使用されます。このトークンの特徴は以下の通りです：
+
+手動生成: GitHub Appのインスタンスごとに明示的に生成する必要があります。これはAPIを通じて行うことができ、トークンは一時的に有効です（通常は数時間）。
+スコープと権限: このトークンのスコープは、GitHub Appが設定された際に定義されたパーミッションに依存します。Appがインストールされているリポジトリや組織に対してのみ有効であり、それ以外の場所へのアクセスは許可されません。
+多用途性: Installation Access Tokenは、そのGitHub Appが設定されている特定のリポジトリまたは組織内で広範な操作を実行するために使用できます。APIアクセス、データの読み書き、GitHubのさまざまなリソースへのアクセスなど、より広範な用途に利用できる点が特徴です。
+選択の基準
+アクセス範囲: 特定のリポジトリ内で完結する単純な自動化にはGITHUB_TOKENが適しています。より広範囲の権限を必要とする場合や、複数のリポジトリや組織レベルでの操作が必要な場合は、GitHub AppのInstallation Access Tokenが適しています。
+セキュリティ要件: セキュリティが極めて重要な場合、権限を細かく制御できるGitHub Appを使用する方が望ましい場合があります。
+このように、GitHub ActionsのGITHUB_TOKENとGitHub AppのInstallation Access Tokenは、用途や設計に応じて異なる
+```
+
+
+## GitHub Packages を GitHub Actions でインストールしたいができなかった……。
+対策としては自動トークン認証を使う。使えないとは書いてないが使えるとも書いていない
+- https://docs.github.com/ja/packages/working-with-a-github-packages-registry/working-with-the-rubygems-registry#github-actions-%E3%83%AF%E3%83%BC%E3%82%AF%E3%83%95%E3%83%AD%E3%83%BC%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E8%AA%8D%E8%A8%BC
+実際に GitHub Packages が取得できるかどうかを試したがうまくいかなかった話も書いておく
+
+https://github.com/legalforce/lot-editor/pull/213
+
+
+
+## GitHub Apps の認証を GitHub Actions で行う方法
+
+手順を記載する。トークンの生成は以下のドキュメント通りである
+
+- https://docs.github.com/ja/apps/creating-github-apps/authenticating-with-a-github-app/generating-an-installation-access-token-for-a-github-app#generating-an-installation-access-token
+
+これは面倒だぜ！やい！
+
+ただしこの手順はすっ飛ばして以下の Actions を使うことでトークンを取得することができる
+- https://github.com/actions/create-github-app-token
