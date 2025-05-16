@@ -738,7 +738,17 @@ AWS Certified Machine Learning - Specialty に関しては機械学習全般も�
 
 ## 認定を取得するためには必須ではないがおすすめな勉強方法
 
+AWS認定試験の合格には必須ではありませんが、実務力を高めたい人には強くおすすめしたい勉強方法があります。
+それは、IaC（Infrastructure as Code）で実際にAWS上にシステムを構築することです。
 
+おすすめの一冊は、こちらの書籍です。私自身もこちらの書籍にすごくお世話になりました。
+
+- [実践Terraform　AWSにおけるシステム設計とベストプラクティス（技術の泉シリーズ）](https://www.amazon.co.jp/%E5%AE%9F%E8%B7%B5Terraform-AWS%E3%81%AB%E3%81%8A%E3%81%91%E3%82%8B%E3%82%B7%E3%82%B9%E3%83%86%E3%83%A0%E8%A8%AD%E8%A8%88%E3%81%A8%E3%83%99%E3%82%B9%E3%83%88%E3%83%97%E3%83%A9%E3%82%AF%E3%83%86%E3%82%A3%E3%82%B9-%E6%8A%80%E8%A1%93%E3%81%AE%E6%B3%89%E3%82%B7%E3%83%AA%E3%83%BC%E3%82%BA%EF%BC%88NextPublishing%EF%BC%89-%E9%87%8E%E6%9D%91-%E5%8F%8B%E8%A6%8F-ebook/dp/B07XT7LJLC/ref=sr_1_3?dib=eyJ2IjoiMSJ9.Z6vyP3wMNaUaAXfLF7KWpRgfX_lqIboWPDB3PDRIM09thCz8h2Ws2Uhl2HCYvtvYPbd0bTC4S2YUlj-7PrREK0FsQEaMy3K2hvBw0De5apz2mRt1eZ5kyFhw3PdwP8VybEVvslSWPV9UBKhdjCQtyFXGv7Dmti2gl5tuxffaelugnC8pjGZcfOhIsA8fncOdWaWo3utUJDyesXyLapQGnI-tzY5b5oYuddLDHGiLsrsjF5jAmYSKnhL1fnwzLmUioJmSP5OlGDMBFKRj9TrnqesBE_3-ZGqItqQfAmoLM9c.O967w7QiK6qvnYsFyPL4k76uaAr9d2dOvzhokmfBLB8&dib_tag=se&keywords=terraform&qid=1747412018&sr=8-3)
+
+この書籍では、よくある構成のシステムをTerraformで一から構築する流れが丁寧に解説されています。
+インフラ設計から運用までの全体像が見える構成になっており、実務と認定学習をつなぐ教材として非常に優れています。
+
+ただ、書籍で使用している Terraform のバージョンが古くて最新バージョンと差異があるため注意が必要です。
 
 # 全冠して得られたこと
 
