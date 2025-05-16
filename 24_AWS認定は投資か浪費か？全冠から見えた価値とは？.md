@@ -332,7 +332,27 @@ AWS認定はゴールではなく、次に進むための「土台」でもあ�
 
 ![03_all_certified](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/03_all_certified.png)
 
-取得開始から全冠までを時系列で表した図が以下となります。大きく4つのフェーズによって全冠を達成しています。
+全部の点数は以下の通り。
+
+| **日付** | **資格名** | **点数** | **合否** |
+| --- | --- | --- | --- |
+| 2019/12/22 | [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) | 700 | 不合格 |
+| 2020/01/20 | [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) | 867 | 合格 |
+| 2022/11/12 | [AWS Certified Solutions Architect - Professional](https://aws.amazon.com/jp/certification/certified-solutions-architect-professional/?ch=sec&sec=rmg&d=1) | 773 | 合格 |
+| 2023/01/07 | [AWS Certified SysOps Administrator - Associate](https://aws.amazon.com/jp/certification/certified-sysops-admin-associate/?ch=sec&sec=rmg&d=1) | 726 | 合格 |
+| 2023/02/04 | [AWS Certified Developer - Associate](https://aws.amazon.com/jp/certification/certified-developer-associate/?ch=sec&sec=rmg&d=1) | 846 | 合格 |
+| 2023/02/13 | [AWS Certified Cloud Practitioner](https://aws.amazon.com/jp/certification/certified-cloud-practitioner/?ch=sec&sec=rmg&d=1) | 803 | 合格 |
+| 2023/03/05 | [AWS Certified DevOps Engineer - Professional](https://aws.amazon.com/jp/certification/certified-devops-engineer-professional/?ch=sec&sec=rmg&d=1) | 792 | 合格 |
+| 2023/04/13 | [AWS Certified Security - Specialty](https://aws.amazon.com/jp/certification/certified-security-specialty/) | 802 | 合格 |
+| 2024/06/16 | [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) | 760 | 合格 |
+| 2024/07/07 | [AWS Certified Machine Learning - Specialty](https://aws.amazon.com/jp/certification/certified-machine-learning-specialty/) | 770 | 合格 |
+| 2024/10/24 | [AWS Certified Data Engineer - Associate](https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?ch=sec&sec=rmg&d=1) | 859 | 合格 |
+| 2024/11/14 | [AWS Certified Machine Learning Engineer - Associate](https://aws.amazon.com/jp/certification/certified-machine-learning-engineer-associate/?ch=sec&sec=rmg&d=1) | 740 | 合格 |
+| 2024/11/23 | [AWS Certified AI Practitioner](https://aws.amazon.com/jp/certification/certified-ai-practitioner/?ch=sec&sec=rmg&d=1) | 768 | 合格 |
+
+## 全冠までの振り返り
+
+取得開始から全冠までを時系列で表した図が以下となります。
 
 ```mermaid
 %%{init: { 'logLevel': 'debug', 'theme': 'default' } }%%
@@ -357,10 +377,8 @@ timeline
         11月 : ⭕️ MLA : ⭕️ AIF
 ```
 
-## フェーズごとの詳細
-
 全冠を振り返ると、大きく4つのフェーズに分けられます。  
-そのときどきの仕事やプライベートの状況と当時のSlackの投稿も含めながら、振り返ってみます。
+そのときどきの仕事やプライベートの状況と当時のSlackの投稿も含めながら、日記風に振り返ってみます。
 
 ### 第1フェーズ: はじめての挫折、そして挑戦（2019年〜2020年）
 
@@ -368,7 +386,8 @@ timeline
 - AWS Certified Solutions Architect - Associate（SAA）
 
 会社の同僚と一緒に、はじめてのAWS認定に挑戦しました。
-2019年12月、誕生日前に受験した初試験――結果は、あと数問足りず不合格。
+2019年12月、誕生日前に受験した初試験。  
+結果は、あと数問足りず不合格。
 試験直後に落ちたことを知らされ、正直かなり心が折れました。
 
 それでも「ここで諦めたらもったいない」と思い直し、1ヶ月間みっちり勉強。
@@ -384,8 +403,8 @@ timeline
 - AWS Certified DevOps Engineer - Professional（DOP）
 - AWS Certified Security - Specialty（SCS）
 
-2022年、転職して新規プロダクトの立ち上げチームに参加。  
-半年間、リリースに向けて走り抜け、無事にサービスを公開することができました。
+2022年、転職して新機能の立ち上げチームに参加。  
+半年間、リリースに向けて走り抜け、無事に新機能を公開することができました。
 
 少し落ち着いたタイミングで、「また何かに挑戦したい」という気持ちが湧き、  
 AWS認定で難関と言われる Solutions Architect - Professional（SAP） に挑戦を決意します。
@@ -414,7 +433,7 @@ AWS認定で難関と言われる Solutions Architect - Professional（SAP） �
 ![09_slack_06](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/09_slack_06.png)
 
 ここで6冠達成。  
-「これは、本当に全冠を狙ってもいいかもしれない」そんな想いを、心の奥底で強く意識するようになりました。
+「これは、本当に全冠を狙ってもいいかもしれない」そんな想いを強く意識するようになりました。
 
 ### 第3フェーズ: 育休前ラストスパート（2024年6月〜7月）
 
@@ -467,9 +486,258 @@ AWS認定で難関と言われる Solutions Architect - Professional（SAP） �
 そして、全冠達成後、ずっと楽しみにしていた [マルちゃん 北海道限定 でっかいやきそば弁当](https://www.amazon.co.jp/%E3%83%9E%E3%83%AB%E3%81%A1%E3%82%83%E3%82%93-%E5%8C%97%E6%B5%B7%E9%81%93%E9%99%90%E5%AE%9A-%E3%81%A7%E3%81%A3%E3%81%8B%E3%81%84%E3%82%84%E3%81%8D%E3%81%9D%E3%81%B0%E5%BC%81%E5%BD%93-258g%C3%9712%E5%80%8B/dp/B00TY03EN2/ref=asc_df_B00TY03EN2?mcid=6578602a75ef331daf0045e0eb92f6bc&tag=jpgo-22&linkCode=df0&hvadid=707549646446&hvpos=&hvnetw=g&hvrand=7145256689919525103&hvpone=&hvptwo=&hvqmt=&hvdev=c&hvdvcmdl=&hvlocint=&hvlocphy=9197917&hvtargid=pla-338949772283&gad_source=1&th=1) に食らいつきました。  
 あの日の味は、今でも忘れられません。
 
+## 認定ごとの難易度
 
+ここでは、全冠を達成するまでに受験したAWS認定それぞれについて、個人的に感じた難易度と、勉強を通して印象に残ったことをまとめました。  
+難易度は主観的なものですが、これから挑戦する方の参考になれば幸いです。
 
-# 勉強方法
+| **資格名** | **難易度** | **感想** |
+| --- | --- | --- |
+| [AWS Certified Solutions Architect - Professional](https://aws.amazon.com/jp/certification/certified-solutions-architect-professional/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️⭐️ | AWSの総合格闘技というような感じで範囲も広ければ問題文も長文でもっとも難しいと感じた|
+| [AWS Certified Machine Learning - Specialty](https://aws.amazon.com/jp/certification/certified-machine-learning-specialty/) | ⭐️⭐️⭐️⭐️⭐️ | 自分の業務とほぼ関わりがなく一からの勉強で覚えることも多いしむずい。機械学習に関する単語がすごく多くそれらを覚えるのに苦労した |
+| [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️ | クラウドだけでなくオンプレや大規模ネットクワークに関する問題が出て馴染がないためむずと感じた |
+| [AWS Certified Security - Specialty](https://aws.amazon.com/jp/certification/certified-security-specialty/) | ⭐️⭐️⭐️⭐️ | セキュリティに関する知識を深ぼることができた認定であった |
+| [AWS Certified DevOps Engineer - Professional](https://aws.amazon.com/jp/certification/certified-devops-engineer-professional/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️ | SAPと同じでProfessionalの認定なため問題文が長文のものが多く読み解くのが大変。ただSAPよりかは難しくなかった |
+| [AWS Certified SysOps Administrator - Associate](https://aws.amazon.com/jp/certification/certified-sysops-admin-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | 当時はラボ試験もあり他の認定とは少し違っている。扱うサービス自体、自分に馴染みのないもので理解に苦戦した。Associateの認定の中では一番むずいと感じた |
+| [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | AWSに関するよく使われるサービスについて問われることが多く、この認定を取得したことによって広く、浅い知識を取得することができた |
+| [AWS Certified Machine Learning Engineer - Associate](https://aws.amazon.com/jp/certification/certified-machine-learning-engineer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | Specialtyとはまた違った認定でSpecialtyを取得していても扱う知識が違っているため勉強が必要 |
+| [AWS Certified Developer - Associate](https://aws.amazon.com/jp/certification/certified-developer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | 開発者向けの認定ではあるが他の認定で出た問題とも重複することもありそこまでむずいと感じなかった |
+| [AWS Certified Data Engineer - Associate](https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | 前職で使っていたサービスの問題も多くそんなにむずいとは感じなかった |
+| [AWS Certified AI Practitioner](https://aws.amazon.com/jp/certification/certified-ai-practitioner/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | プロンプトエンジニアリングの手法などAWSに限らず勉強になった認定 |
+| [AWS Certified Cloud Practitioner](https://aws.amazon.com/jp/certification/certified-cloud-practitioner/?ch=sec&sec=rmg&d=1) | ⭐️ | ある程度、AWSを触ったことのある人であれば難しいとは感じないと思う。勉強時間ももっとも少なかった |
+
+## おすすめの受ける順番
+
+AWS認定を全冠したからこそ感じたおすすめの受ける順番をこちらにまとめています。
+
+```mermaid
+graph TD
+    CLF["[Foundational]Cloud Practitioner"]
+    AIF["[Foundational]AI Practitioner"]
+
+    SAA["[Associate]Solutions Architect"]
+    MLA["[Associate]Machine Learning"]
+    DEA["[Associate]Data Engineer"]
+    SOA["[Associate]SysOps Administrator"]
+    DVA["[Associate]Developer"]
+
+    SAP["[Professional]Solutions Architect"]
+    DOP["[Professional]DevOps Engineer"]
+
+    MLS["[Specialty]Machine Learning"]
+    SCS["[Specialty]Security"]
+    ANS["[Specialty]Advanced Networking"]
+
+    CLF --> SAA
+    CLF --> MLA
+    CLF --> DEA
+    CLF --> SOA
+    CLF --> DVA
+
+    AIF --> MLA
+
+    SAA --> SAP
+    DVA --> DOP
+    SOA --> DOP
+
+    SAP --> SCS
+    SAP --> ANS
+
+    AIF --> MLS
+
+    %% 色付け
+    style CLF fill:#CDEAFE,stroke:#5B8DEF,color:#000
+    style AIF fill:#CDEAFE,stroke:#5B8DEF,color:#000
+
+    style SAA fill:#D1F2EB,stroke:#27AE60,color:#000
+    style MLA fill:#D1F2EB,stroke:#27AE60,color:#000
+    style DEA fill:#D1F2EB,stroke:#27AE60,color:#000
+    style SOA fill:#D1F2EB,stroke:#27AE60,color:#000
+    style DVA fill:#D1F2EB,stroke:#27AE60,color:#000
+
+    style SAP fill:#FADBD8,stroke:#C0392B,color:#000
+    style DOP fill:#FADBD8,stroke:#C0392B,color:#000
+
+    style MLS fill:#F9E79F,stroke:#F1C40F,color:#000
+    style SCS fill:#F9E79F,stroke:#F1C40F,color:#000
+    style ANS fill:#F9E79F,stroke:#F1C40F,color:#000
+```
+
+受ける順番のおすすめとしては [AWS認定の再認定](#aws認定の再認定) の通り、認定には親子関係があるため下位認定から取得していくことで効率よく下位認定の知識を使いつつ勉強していくことが可能です。くわしくは図を確認ください。  
+Specialty の認定に関しては親子関係はありませんが [AWS Certified Solutions Architect - Professional](https://aws.amazon.com/jp/certification/certified-solutions-architect-professional/?ch=sec&sec=rmg&d=1) を取得してから [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) と [AWS Certified Security - Specialty](https://aws.amazon.com/jp/certification/certified-security-specialty/) を受けると良いと思います。  
+いきなり Specialty に挑戦するのはかなりキツイのでまずは Professional を受けて慣れてから受けるとスムーズですし Specialty の問題も Professional と同じで長文問題が多く、頭の中で構成図をちゃんと描いて解く必要があるためそういった意味でも先に取得してから取り掛かることをオススメします。
+
+Machine Learning 系は少し特殊な立ち位置なので他の認定とは別で考えた方が良いです。Associate と Specialty は被る部分はありますが Specialty が合格したからといって Associate も受かるわけではなく必要な知識が少し違います。なのでこれらに関しては事前に [AWS Certified AI Practitioner](https://aws.amazon.com/jp/certification/certified-ai-practitioner/?ch=sec&sec=rmg&d=1) を受けてから臨むと良いと思います。
+
+[AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) を1番最初に受ける戦略も良いです。  
+汎用性がとにかく高く横展開（Developer, SysOps Administrator, Data Engineer）も良いですし下位認定もなんなく受かるレベルまでいけます。個人的な感覚としてはすべての認定の基礎といっても過言ではないかと思っています。AWS認定がどういったものか把握するのにもいいですし難易度としてもちょうどよいためです。  
+扱う範囲も広いため、最初のインプットにすごく苦労はしますが先にやっておくと後が楽だと思います。
+
+## 勉強時間と期間
+
+全冠達成までの勉強時間と期間についてまとめます。
+
+### 総期間
+
+- 全冠達成まで：約 **5年**
+- うち実質的な勉強期間：約 **2年**
+
+### 1認定あたりの勉強量
+
+- 勉強期間：**2週間〜1ヶ月**
+- 1日の勉強時間：**仕事終わりに3〜4時間**
+
+### 総勉強時間（概算）
+
+- 1認定あたり：約 **42時間**（3時間 × 14日）
+- 全認定合計：約 **504時間**
+- ※勤務時間（160h/月）換算で**約3ヶ月分**に相当
+
+---
+
+人によって学習速度は異なりますので、あくまで参考値です。
+
+## 勉強方法
+
+色々と試行錯誤しながら勉強した結果、自分なりに最適だと思う勉強方法があるのでそれをまとめています。  
+だいたい以下の5ステップを元に勉強をすることで合格するまでの知識を得ることができます。
+
+1. 試験概要を確認する
+2. 書籍を購入する（必要に応じて）
+3. 問題をひたすら解く
+4. 問題を解いてわからないところを確認する
+5. 公式の模擬問題を解く
+
+### 1. 試験概要を確認する
+
+試験概要にはその認定に関する情報がすべてまとまっています。  
+「どのような能力が検証されるのか」、「受験対象者」、「試験内容」、「試験で出題されるサービスの一覧」などがまとまっているため、この試験ガイドを見るだけで何を勉強するべきかを把握することができます。  
+自分の失敗談ですが最初の頃は試験ガイドを見ずに勉強をしていたためかなり非効率でした。
+
+| **資格名** | **試験ガイド** |
+| --- | --- |
+| [AWS Certified Cloud Practitioner](https://aws.amazon.com/jp/certification/certified-cloud-practitioner/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Cloud-Practitioner_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-cloud-practitioner/AWS-Certified-Cloud-Practitioner_Exam-Guide.pdf) |
+| [AWS Certified AI Practitioner](https://aws.amazon.com/jp/certification/certified-ai-practitioner/?ch=sec&sec=rmg&d=1) | [AWS-Certified-AI-Practitioner_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-ai-practitioner/AWS-Certified-AI-Practitioner_Exam-Guide.pdf) |
+| [AWS Certified SysOps Administrator - Associate](https://aws.amazon.com/jp/certification/certified-sysops-admin-associate/?ch=sec&sec=rmg&d=1) | [AWS-Certified-SysOps-Administrator-Associate_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-sysops-associate/AWS-Certified-SysOps-Administrator-Associate_Exam-Guide.pdf) |
+| [AWS Certified Developer - Associate](https://aws.amazon.com/jp/certification/certified-developer-associate/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Developer-Associate_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-dev-associate/AWS-Certified-Developer-Associate_Exam-Guide.pdf) |
+| [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Solutions-Architect-Associate_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-sa-assoc/AWS-Certified-Solutions-Architect-Associate_Exam-Guide.pdf) |
+| [AWS Certified Data Engineer - Associate](https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Data-Engineer-Associate_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-data-engineer-associate/AWS-Certified-Data-Engineer-Associate_Exam-Guide.pdf) |
+| [AWS Certified Machine Learning Engineer - Associate](https://aws.amazon.com/jp/certification/certified-machine-learning-engineer-associate/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Machine-Learning-Engineer-Associate_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-machine-learning-engineer-associate/AWS-Certified-Machine-Learning-Engineer-Associate_Exam-Guide.pdf) |
+| [AWS Certified Solutions Architect - Professional](https://aws.amazon.com/jp/certification/certified-solutions-architect-professional/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Solutions-Architect-Professional_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-sa-pro/AWS-Certified-Solutions-Architect-Professional_Exam-Guide.pdf) |
+| [AWS Certified DevOps Engineer - Professional](https://aws.amazon.com/jp/certification/certified-devops-engineer-professional/?ch=sec&sec=rmg&d=1) | [AWS-Certified-DevOps-Engineer-Professional_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-devops-pro/AWS-Certified-DevOps-Engineer-Professional_Exam-Guide.pdf) |
+| [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) | [AWS-Certified-Advanced-Networking-Specialty_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-advnetworking-spec/AWS-Certified-Advanced-Networking-Specialty_Exam-Guide.pdf) |
+| [AWS Certified Security - Specialty](https://aws.amazon.com/jp/certification/certified-security-specialty/) | [AWS-Certified-Security-Specialty_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-security-spec/AWS-Certified-Security-Specialty_Exam-Guide.pdf) |
+| [AWS Certified Machine Learning - Specialty](https://aws.amazon.com/jp/certification/certified-machine-learning-specialty/) | [AWS-Certified-Machine-Learning-Specialty_Exam-Guide.pdf](https://d1.awsstatic.com/ja_JP/training-and-certification/docs-ml/AWS-Certified-Machine-Learning-Specialty_Exam-Guide.pdf) |
+
+### 2. 書籍を購入する（必要に応じて）
+
+書籍はその認定で出題される内容が網羅的に抑えられているため、オススメです。  
+注意がいることはすべての認定に対応した書籍があるわけではありません。また発売した日によっては内容が古く一部仕様が間違っていることもあるため見極めが必要です。
+
+さらに書籍を購入するもう1つの利点としては巻末に本番相当の模擬問題が付属していることです。この模擬問題のためだけに書籍を購入するだけでも価値があります。
+
+こちらの書籍一覧は実際に AWS認定のために私自身が購入したものとなります。ここまで購入する必要は全くありませんし購入しなくても合格はできると思います。
+
+![14_books](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/14_books.png)
+
+### 3. 問題をひたすら解く
+
+このフェーズに来たら試験概要を把握できて、さらにその認定の全体像まで分かった状態かと思います。  
+書籍を購入していない場合は全体像は把握できていないかもしれないですが問題をひたすら解いていくことで把握もできるようになります。
+
+問題をどうやって解いていくのかですが4つほど方法があります。
+
+#### 1. 書籍の巻末に付属している模擬問題を解く
+
+書籍を購入すると大抵は巻末に模擬問題が用意されています。  
+こちらの問題は普段使うというよりかは本番相当の試験を想定して解くために使用するのがよいでしょう。
+
+問題の内容は書籍によってバラバラです。、また認定試験では問われないような問題も出ることがあります。なので実際に試してみて点数が思ったほど取れなくても合格できないということはなかったりします。
+
+#### 2. [CloudLicense | AWS WEB問題集で学習しよう](https://cloud-license.com/) に登録して問題を解く（もっともオススメ）
+
+有料ですが効率よく問題を解くことに特化しておりAWS認定全冠でもっとも貢献度の高いサービスでした。  
+大体、料金的には AWS認定の書籍を2冊購入した程度のものです。
+
+3ヶ月単位での契約になりベーシックとプロフェッショナルがありますが Associate の認定のみ取得を考えているならベーシックで大丈夫です。  
+Professional, Specialty も考えているならプロフェッショナルで登録する必要があります。
+
+こちらのサービスでは7問ごと問題を解くことができ、解説も含まれるためこのサービスだけで合格が可能です。  
+また AWS認定本試験モード というものがあり、これは本番と同じ問題数を解いて結果を確認することができる機能で、この AWS認定本試験モード で8割ほど正解するようになったら合格ラインに達していると判断してよいです。
+
+このサービスで解くことになる問題のサンプルは本番の認定試験で問われる内容とかなり似通っています。そのためある程度、点数を取ることができるようになれば認定試験を受けに行く目安にして大丈夫です。
+
+#### 3. [Udemy](https://www.udemy.com/courses/search/?src=ukw&q=AWS)
+
+Udemy では個人で模擬問題を提供しているケースがあります。  
+模擬試験形式でいくつか提供されるため本番を想定した形で何度か挑戦することができます。  
+1問ずつ回答し結果と回答を確認していく形式とすべて解き終わってから結果を確認する形式があるため、自分の状況に合わせて学習することが可能です。
+
+こちらも書籍と同じ問題で認定試験では問われないような問題もでることがあります。
+
+#### 4. 試験ガイドを読み込ませて生成AIに問題を出してもらう
+
+[こちらの投稿](https://x.com/nasuvit_z/status/1828824115781984279) の内容です。  
+試験ガイドを ChatGPT などに読み込ませ、その後問題を出してもらう方法です。  
+これはまだ認定資格ができたばかりの時で情報が少ない時に有効です。
+
+### 4. 問題を解いてわからないところを確認する
+
+[CloudLicense | AWS WEB問題集で学習しよう](https://cloud-license.com/) や [Udemy](https://www.udemy.com/courses/search/?src=ukw&q=AWS) を活用していく中でもすべてを解説しているわけではなかったりします。  
+そのため、別途わからないことについて調べて理解する必要があります。
+
+AWSが公式で出している [サービス別資料 | AWS クラウドサービス活用資料集](https://aws.amazon.com/jp/events/aws-event-resource/archive/?cards.sort-by=item.additionalFields.SortDate&cards.sort-order=desc&awsf.tech-category=*all) にはサービス単位でわかりやすくまとまっているためこちらを参考にすると良いでしょう。  
+購入した書籍があれば書籍に戻って確認することも良いでしょう。
+
+また生成AIなどを使い、わからないことについて聞くことも有効です。
+
+### 5. 公式の模擬問題を解く
+
+最後の総仕上げとして公式が提供している模擬問題を解きます。こちらは本番の認定試験と同じ形式で模擬問題を解くことができるので最後の総仕上げとして有効活用しましょう。  
+私の場合は認定資格の前日に模擬問題を受けて8割取得できるか必ず腕試しをします。
+
+| **資格名** | **模擬問題** |
+| --- | --- |
+| [AWS Certified Cloud Practitioner](https://aws.amazon.com/jp/certification/certified-cloud-practitioner/?ch=sec&sec=rmg&d=1) | [AWS Certified Cloud Practitioner Official Practice Question Set (CLF-C02- Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/16792/aws-certified-cloud-practitioner-official-practice-question-set-clf-c02-japanese) |
+| [AWS Certified AI Practitioner](https://aws.amazon.com/jp/certification/certified-ai-practitioner/?ch=sec&sec=rmg&d=1) | [Exam Prep Official Practice Question Set: AWS Certified AI Practitioner (AIF-C01 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/19791/exam-prep-official-practice-question-set-aws-certified-ai-practitioner-aif-c01-japanese) |
+| [AWS Certified SysOps Administrator - Associate](https://aws.amazon.com/jp/certification/certified-sysops-admin-associate/?ch=sec&sec=rmg&d=1) | [AWS Certified SysOps Administrator - Associate Official Practice Question Set (SOA-C02 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/12555/aws-certified-sysops-administrator-associate-official-practice-question-set-soa-c02-japanese) |
+| [AWS Certified Developer - Associate](https://aws.amazon.com/jp/certification/certified-developer-associate/?ch=sec&sec=rmg&d=1) | [AWS Certified Developer - Associate Official Practice Question Set (DVA-C02 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/14060/aws-certified-developer-associate-official-practice-question-set-dva-c02-japanese) |
+| [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) | [AWS Certified Solutions Architect – Associate Official Practice Question Set (SAA-C03 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/13269/aws-certified-solutions-architect-associate-official-practice-question-set-saa-c03-japanese) |
+| [AWS Certified Data Engineer - Associate](https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?ch=sec&sec=rmg&d=1) | [Exam Prep Official Practice Question Set: AWS Certified Data Engineer - Associate (DEA-C01 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/18145/exam-prep-official-practice-question-set-aws-certified-data-engineer-associate-dea-c01-japanese) |
+| [AWS Certified Machine Learning Engineer - Associate](https://aws.amazon.com/jp/certification/certified-machine-learning-engineer-associate/?ch=sec&sec=rmg&d=1) | [Exam Prep Official Practice Question Set: AWS Certified Machine Learning Engineer - Associate (MLA-C01 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/19689/exam-prep-official-practice-question-set-aws-certified-machine-learning-engineer-associate-mla-c01-japanese) |
+| [AWS Certified Solutions Architect - Professional](https://aws.amazon.com/jp/certification/certified-solutions-architect-professional/?ch=sec&sec=rmg&d=1) | [AWS Certified Solutions Architect – Professional Official Practice Question Set (SAP-C02 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/13272/aws-certified-solutions-architect-professional-official-practice-question-set-sap-c02-japanese) |
+| [AWS Certified DevOps Engineer - Professional](https://aws.amazon.com/jp/certification/certified-devops-engineer-professional/?ch=sec&sec=rmg&d=1) | [AWS Certified DevOps Engineer - Professional Official Practice Question Set (DOP-C02 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/14541/aws-certified-devops-engineer-professional-official-practice-question-set-dop-c02-japanese) |
+| [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) | [AWS Certified Advanced Networking - Specialty Official Practice Question Set (ANS-C01 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/14837/aws-certified-advanced-networking-specialty-official-practice-question-set-ans-c01-japanese) |
+| [AWS Certified Security - Specialty](https://aws.amazon.com/jp/certification/certified-security-specialty/) | [AWS Certified Security - Specialty Official Practice Question Set (SCS-C02 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/15232/aws-certified-security-specialty-official-practice-question-set-scs-c02-japanese) |
+| [AWS Certified Machine Learning - Specialty](https://aws.amazon.com/jp/certification/certified-machine-learning-specialty/) | [Exam Prep Official Practice Question Set: AWS Certified Machine Learning - Specialty (MLS-C01 - Japanese)](https://explore.skillbuilder.aws/learn/course/external/view/elearning/12525/exam-prep-official-practice-question-set-aws-certified-machine-learning-specialty-mls-c01-japanese) |
+
+詳しくはこちらの記事がわかりやすくまとめてくださっているので参照してください。
+
+- [ななななんと！AWS認定の模擬試験が無料になりました！！ | DevelopersIO](https://dev.classmethod.jp/articles/new-aws-official-practice-questions/)
+- [AWS認定の無料模擬試験がさらに便利になりました！ | DevelopersIO](https://dev.classmethod.jp/articles/new-aws-official-practice-questions2/)
+
+## 特定の認定における特化した勉強方法
+
+どの認定にも共通した勉強方法は [こちら](#勉強方法) を参考にしてください。ここでは特定の認定に特化した勉強方法をまとめています。
+
+### AWS Certified Cloud Practitioner
+
+AWS Certified Cloud Practitioner で出題される内容を網羅的に把握したい場合は [AWS認定資格 クラウドプラクティショナーの教科書: 合格へ導く虎の巻 CloudTech制作委員会シリーズ](https://amzn.asia/d/69zrPls) の書籍が無料で Kindle で読めるため、これだけで充分です。  
+
+### AWS Certified AI Practitioner
+
+前提知識としてプロンプトエンジニアリングに関して理解をしておく必要があります。
+[Prompt Engineering Guide | Prompt Engineering Guide](https://www.promptingguide.ai/jp) のサイトにプロンプトエンジニアリングに関する情報がまとまっているため、ひと通り見ておくとよいでしょう。
+
+### AWS Certified Machine Learning - Specialty
+
+AWS Certified Machine Learning - Specialty に関しては機械学習全般も試験内容に含まれるため [深層学習教科書 ディープラーニング G検定(ジェネラリスト)公式テキスト 第2版](https://amzn.asia/d/cxs40x6) を購入して4章〜6章あたりを読むことをオススメします。  
+参考: [IT初心者が AWS Certified Machine Learning - Specialty（MLS-C01）にチャレンジして一発合格した件について #AWS - Qiita](https://qiita.com/chamittey_mayu_hiramoto/items/4f5ffe629766a0323f36)
+
+書籍だけでなく Youtube で [スタビジ【誰でもAIデータサイエンス】byウマたん - YouTube](https://www.youtube.com/@aiby8596) のチャンネルの動画も分かりやすく説明されておりとても参考になります。何度もこちらの動画に助けられました。
+
+## 認定を取得するためには必須ではないがおすすめな勉強方法
+
 
 
 # 全冠して得られたこと
