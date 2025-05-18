@@ -422,25 +422,64 @@ AWS認定で難関と言われる Solutions Architect - Professional（SAP） �
 このSAP試験は想像以上にハードで、改定直前のタイミングもあり、本当にギリギリまで苦戦しました。
 それでもなんとか合格。
 
-![04_slack_01](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/04_slack_01.png)
+2022年11月14日 10:32 slack の投稿より
+> SAP 受かってきたので、ゆるーく6冠(FOUNDATIONAL, ASSOCIATE, PROFESSIONAL)を目指そうと思う。  
+> PROFESSIONAL の認定試験を3年に1回受ければ再認定になるから6冠と言いつつ2つだけ更新していけばいいし。
+> 
+> SPECIALTY は興味のあるものはいずれとりたい。
 
 そして勢いのまま、次に Associateレベルの認定群 にも挑戦することに。  
 当初は「まぁ、取れたらいいかな」くらいの軽い気持ちでした。
 
-![05_slack_02](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/05_slack_02.png)
-![06_slack_03](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/06_slack_03.png)
+2023年1月10日 12:04 slack の投稿より
+> 3つ目の AWS の資格に合格してきた！
+> 
+> AWS Certified SysOps Administrator - Associate はラボ試験という名のコンソール画面を操作する試験があるので他の資格と少し違うため注意が必要であった。ラボ試験の勉強ほぼしてなかったけどなんとか受かったようだった。  
+> ラボ試験の内容は詳しく言えなけど結構当たり前に必要な機能をコンソールで実装する感じだった。
+> 
+> 来月あたりに AWS Certified Developer - Associate は受ける予定。
+
+2023年2月6日 17:26 slack の投稿より
+> AWS Certified Developer - Associate に受かってきた！  
+> 来週は AWS Certified Cloud Practitioner を受けてくる。AWS Certified Cloud Practitioner は 160門ぐらい解いてみたけど割とクセのある問題が多いと感じた。  
+> 問題の書き方で曲解して間違えるのが多い……。
 
 1つ取るたびに自信がつき、「取れるかも」「次もいけるかも」と、どんどん前向きになっていきました。  
 
-![07_slack_04](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/07_slack_04.png)
+2023年2月15日 09:55 slack の投稿より
+> AWS Certified Cloud Practitioner (CLF) に受かってきたのでこれで5冠になった。CLFは一番下のレベルの資格だけあって難しいとは感じなかった。  
+> ある程度AWS触っている人だったら勉強なしでも受かりそう。自分は一週間ぐらい問題解くのと参考書で知らない箇所を読む程度で大丈夫だった。
+>  
+> サポートプランの話が試験で出るからこの辺全くわからんかったから参考書がためになった。参考書は無料で kindle でダウンロードできるからこれ１冊で充分や！
+>  
+> https://dev.classmethod.jp/articles/book-review-certification-clf/
 
 次々と合格を重ねるうちに、「もしかして、全冠も夢じゃないかもしれない」 そんな手応えを感じ始めます。
 
-![08_slack_05](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/08_slack_05.png)
+2023年3月6日 10:20 slack の投稿より
+> 昨日の日曜日に「AWS Certified DevOps Engineer - Professional (DOP)」に無事受かってきたのでAWS6冠になった💪
+> 
+> > ゆるーく6冠(FOUNDATIONAL, ASSOCIATE, PROFESSIONAL)を目指そう
+> 
+> 11月14日にゆるーくと言っていたが全然ゆるくじゃなかくてかなり急ピッチだった😇  
+> Foundational、Associate、Professionalが完了したのでこれからはゆるーく Speciality を取得していこうと思う。  
+> Specialityは2ヶ月に1つ取得ぐらいのペースにする。今度こそ本当にゆるーくする。ゆるーくと言いつつ書籍は3冊購入完了してるけど……。
 
 この頃、自然とSlackへの投稿頻度も上がり、「自分との約束」として、勉強の進捗を残していくようになっていました。
 
-![09_slack_06](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/09_slack_06.png)
+2023年4月17日 15:55 slack の投稿より
+> 先々週の金曜日に遅刻して試験がパーになって失った1万5000円だけど先週の木曜日の仕事終わりに更に追加で1万5000円を課金して無事AWS Certified Security - Specialty（SCS）に受かってきたのでAWS7冠になった！
+> 
+> SCSを受けてKMSとか通信の暗号化とか少しわかるようになった。  
+> 今まで受けてきた資格の難易度をこんな感じかな🤔
+> 
+> SAP:☆☆☆☆☆  
+> DOP:☆☆☆☆  
+> SCS:☆☆☆☆ → 今回  
+> SOA:☆☆☆  
+> SAA:☆☆  
+> DVA:☆☆  
+> CLF:☆
 
 ここで6冠達成。  
 「これは、本当に全冠を狙ってもいいかもしれない」そんな想いを強く意識するようになりました。
@@ -461,8 +500,36 @@ AWS認定で難関と言われる Solutions Architect - Professional（SAP） �
 勉強時間の確保が本当に難しかったですが、「育休に入る前に、あと少しだけ進めたい」という思いで、夜遅くにコツコツ勉強を継続。  
 家事と仕事を終えてからの短い時間に、なんとか勉強時間を捻出しました。
 
-![10_slack_07](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/10_slack_07.png)
-![11_slack_08](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/11_slack_08.png)
+2024年6月17日 12:56 slack の投稿より
+> 去年も継続的にやっていたAWSの資格取得を再開してみた。  
+> リハビリがてら巷では一番むずかしいと噂の **AWS Certified Advanced Networking - Specialty** を昨日 150$ と 3時間かけて受けてきたけど無事受かってきた。
+> 
+> 試験が3時間ある中、1時間たった頃から尿意との戦いだったな……。  
+> 頭の中で構成図を生成しながら尿意を我慢しながらという感じ。  
+> 
+> Beta版も含めればあと4つ！なんとか今年中には全部取得してしまいたい。
+> 
+> - **AWS Certified Machine Learning - Specialty**
+> - **AWS Certified Machine Learning Engineer - Associate**
+> - **AWS Certified Data Engineer - Associate**
+> - **AWS Certified AI Practitioner**
+> 
+> やっぱ試験数多くない。
+
+2024年7月8日 16:32 slack の投稿より
+> 昨日は暑い中、横浜まで出向き **AWS Certified Machine Learning - Specialty** を受けてきて無事受かってきた！
+> 
+> 準備期間がだいたい 3週間ぐらいで機械学習に関しては知識が無い状態からの勉強だからきついかなと思ったけどやればいけるもんだな。  
+> 今までは資格に特化した書籍があったりと勉強しやすかったけど今回は無いし一般的な機械学習の知識をいれないといけなかったらちょっとつらかった。G検の書籍を買って読んだり Youtube を見たりそんなんばっかやってた。
+> 
+> 知らないアルゴリズムとか概念とか単語が多すぎる試験で例えば……教師なし学習, 教師あり学習, 強化学習, K近傍法, K-means法, XGBoost, ロジスティック回帰, 線形回帰,  過学習, 正規化(L1正規化, L2正規化), SMOTE, ランダムカットフォレスト, クラス不均衡, バイアス, 混同行列, Seq2Seq, Word2vecなどなど。これらの機械学習の知識に AWS のサービスの話しが入ってくるから割ときつい。
+> 
+> 残りはBeta版含めて後３つ！そのうち以下の２つは今回受かった資格の下位の資格だから多分いけるはず……。
+> 
+> - **AWS Certified Machine Learning Engineer - Associate**
+> - **AWS Certified AI Practitioner**
+> 
+> 多分、年内にはすべて取得できる予定。そして来年は AWS Summit に出てステッカーもらうぞ！
 
 義母にもサポートをお願いしながら、ANSとMLSに無事合格。家族に支えられながら、なんとかここまでたどり着きました。
 
@@ -484,8 +551,33 @@ AWS認定で難関と言われる Solutions Architect - Professional（SAP） �
 
 そして
 
-![12_slack_09](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/12_slack_09.png)
-![13_slack_10](https://raw.githubusercontent.com/dodonki1223/image_garage/refs/heads/master/articles/24/13_slack_10.png)
+2024年10月25日 11:15 slack の投稿より
+> 昨日は出社してお昼の時間とプラスで1時間を使って渋谷のテストセンターで **AWS Certified Data Engineer - Associate** を受けてきて無事受かってきた！  
+> 
+> 10:40 〜 12:36の間に離席したから Door to Door で 2時間もかからずに戻ってこれた。  
+> 
+> 育休明けからゆるーく勉強して受けたから 24日ぐらいかかったけど Professional とか Speciality と比べると Associate は問題自体が解きやすいなー。  
+> 今年の3月ぐらいにできた資格だからあんまり情報がなかったけどなんとかなるな。AWS Glue, AWS Lake Formation, Amazon Redshift, Amazon Athena, Amazon S3 あたりがよくでてきた印象。前職で AWS Glue はよく使ってたからイメージが湧きやすい資格やった。  
+> 
+> 残りはBeta版含めて後２つ！これらの資格は最近、できたばっかだから情報ほぼ皆無だから普段と違う進め方をしないといけないな。  
+>   
+> - **AWS Certified Machine Learning Engineer - Associate**
+> - **AWS Certified AI Practitioner**
+>   
+> AWS Certified AI Practitioner に関しては来年の2月15日までは再受験がタダになるから実質受かるまで受け放題なのがいい。なんとか11月中には取得してしまいたい。 
+
+2024年11月25日 18:27 slack の投稿より
+> 実は先週の土曜日と先々週の木曜日でAWSの残り２つの資格を取って無事、全冠してきました！  
+> ちょうど今日の25日がギルド会での発表だったのでそれになんとか間に合わせようと頑張って詰め込んだんですがまぁなんとかなるもんですね。  
+>   
+> **AWS Certified AI Practitioner**  
+> **AWS Certified Machine Learning Engineer - Associate**  
+>  
+> どっちも今年の10月に正式版が出たばっかりで情報がほぼ皆無だったのですがなんとかなりました。  
+> AWS Certified AI Practitioner は [Prompt Engineering Guide](https://www.promptingguide.ai/jp) の内容が出たりと割と勉強になる感じの試験だったのでオススメ。  
+> AWS Certified Machine Learning Engineer - Associate はどんだけ AWS SageMarker が好きなんだよってぐらい SageMarker 一色のような試験だった。  
+> この２つの認定は来年の２月ぐらいまでに取得するとアーリアダプターということで認定バッジ以外にもう一つ認定バッジがもらえる。  
+> AWS認定を受けてきてやっと全冠できてそしてギルド会でも喋ったのでもう満足です :smile_a:
 
 2024年11月、すべての認定試験に合格。ついに、AWS認定「全冠」を達成。  
 この時の達成感は、単なる資格取得の喜びではありませんでした。
