@@ -80,8 +80,8 @@ AWS認定は **一度取れば一生モノ** ではなく、最新技術を学�
 
 すべて取得するためには結構なお金がかかります。
 
-カテゴリごと値段が設定されています。全部で12個の認定をすべて取得するためには330,000円にプラスで消費税の10%を加えると **350,000円** が必要になります。  
-実際には1つの認定をもらえると特典として次回の認定試験の半額バウチャーを貰えるので一番始めに Foundational の認定から始めた場合は合計で165,000円ににプラスで消費税の10%を加えると **175,000円** が必要となります。
+カテゴリごと値段が設定されています。全12個の認定をすべて取得するためには330,000円にプラスで消費税の10%を加えると **350,000円** が必要になります。  
+実際には1つの認定を取得すると特典として次回の認定試験の半額バウチャーを貰えるので一番始めに Foundational の認定から始めた場合は合計で165,000円にプラスで消費税の10%を加えると **175,000円** が必要となります。
 
 | **カテゴリ** | **料金** | **半額バウチャー利用時** |
 | --- | --- | --- |
@@ -104,15 +104,15 @@ AWS認定は **一度取れば一生モノ** ではなく、最新技術を学�
 **ダミー問題/問題数**
 
 カテゴリごとで問題数が微妙に異なっています。ダミー問題（どれがダミー問題か区別はできません）が含まれておりこれらの問題に回答して正解、不正解だったとしてもそれは点数に含まれないものになります。  
-これらの問題はAWSがお試しで出しており今後認定資格に問題を含めるかどうかを検討するために行っている施策となります。
+これらの問題はAWSがお試しで出しており今後の認定試験に問題を含めるかどうかを検討するために行っている施策となります。
 
 **合格点**
 
-カテゴリごと合格ラインの点数が決まっており、難易度が上がっていくにつれて合格ラインの点数が上がっていきます。
+カテゴリごと合格ラインの点数が決まっており、難易度が上がるにつれて、問題が長文化し合格ラインの点数が上がっていきます。
 
 **試験時間**
 
-カテゴリごとに試験時間が異なっています。難易度が上がっていくにつれて問題が長文読解になりすぐの回答ができなくなってきます。一つの問題に対して数分かけることもあるため、Professional や Specialty の 180分でも足りないということは人によってはあります。自分も時間が足りなくてギリギリで回答し終わるということが何度もありました。
+カテゴリごとに試験時間が異なっています。難易度が上がるにつれて、問題が長文化し、すぐに回答できなくなってきます。一つの問題に対して数分かけることもあるため、Professional や Specialty の 180分でも足りないということは人によってはあります。自分も時間が足りなくてギリギリで回答し終わるということが何度もありました。
 
 ## 認定を取得するとどうなる？
 
@@ -188,7 +188,7 @@ AWS認定アカウントの特典のメニュー欄に半額バウチャーの�
 
 ## AWS認定の再認定
 
-試験の有効期限が3年なので再度試験を受験する必要があります。詳しくは [AWS Recertification（再認定）](https://aws.amazon.com/jp/certification/recertification/) のページで内容を確認できます。
+AWS認定の有効期限が3年なので再度認定試験を受験する必要があります。詳しくは [AWS Recertification（再認定）](https://aws.amazon.com/jp/certification/recertification/) のページで内容を確認できます。
 
 再認定で重要なことは **12個すべて再度受験する必要はない** ということです。認定の一部には親子関係があるものがありその場合は上位認定だけ更新すれば自動的に下位資格も再認定されることになります。  
 関係図に表したものが以下となります。⭐️マークの付いている上位認定を受けていくことで全冠を維持することができます。
@@ -596,15 +596,15 @@ AWS認定で難関と言われる Solutions Architect - Professional（SAP） �
 | **資格名** | **難易度** | **感想** |
 | --- | --- | --- |
 | [AWS Certified Solutions Architect - Professional](https://aws.amazon.com/jp/certification/certified-solutions-architect-professional/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️⭐️ | AWSの総合格闘技というような感じで範囲も広ければ問題文も長文でもっとも難しいと感じた|
-| [AWS Certified Machine Learning - Specialty](https://aws.amazon.com/jp/certification/certified-machine-learning-specialty/) | ⭐️⭐️⭐️⭐️⭐️ | 自分の業務とほぼ関わりがなく一からの勉強で覚えることも多いしむずい。機械学習に関する単語がすごく多くそれらを覚えるのに苦労した |
-| [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️ | クラウドだけでなくオンプレや大規模ネットクワークに関する問題が出て馴染がないためむずと感じた |
+| [AWS Certified Machine Learning - Specialty](https://aws.amazon.com/jp/certification/certified-machine-learning-specialty/) | ⭐️⭐️⭐️⭐️⭐️ | 自分の業務とほぼ関わりがなく一からの勉強で覚えることも多いし難しい。機械学習に関する単語がすごく多くそれらを覚えるのに苦労した |
+| [AWS Certified Advanced Networking - Specialty](https://aws.amazon.com/jp/certification/certified-advanced-networking-specialty/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️ | クラウドだけでなくオンプレや大規模ネットワークに関する問題が出て馴染がないためむずと感じた |
 | [AWS Certified Security - Specialty](https://aws.amazon.com/jp/certification/certified-security-specialty/) | ⭐️⭐️⭐️⭐️ | セキュリティに関する知識を深ぼることができた認定であった |
 | [AWS Certified DevOps Engineer - Professional](https://aws.amazon.com/jp/certification/certified-devops-engineer-professional/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️⭐️ | SAPと同じでProfessionalの認定なため問題文が長文のものが多く読み解くのが大変。ただSAPよりかは難しくなかった |
-| [AWS Certified SysOps Administrator - Associate](https://aws.amazon.com/jp/certification/certified-sysops-admin-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | 当時はラボ試験もあり他の認定とは少し違っている。扱うサービス自体、自分に馴染みのないもので理解に苦戦した。Associateの認定の中では一番むずいと感じた |
+| [AWS Certified SysOps Administrator - Associate](https://aws.amazon.com/jp/certification/certified-sysops-admin-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | 当時はラボ試験もあり他の認定とは少し違っている。扱うサービス自体、自分に馴染みのないもので理解に苦戦した。Associateの認定の中では一番難しいと感じた |
 | [AWS Certified Solutions Architect - Associate](https://aws.amazon.com/jp/certification/certified-solutions-architect-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | AWSに関するよく使われるサービスについて問われることが多く、この認定を取得したことによって広く、浅い知識を取得することができた |
 | [AWS Certified Machine Learning Engineer - Associate](https://aws.amazon.com/jp/certification/certified-machine-learning-engineer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️⭐️ | Specialtyとはまた違った認定でSpecialtyを取得していても扱う知識が違っているため勉強が必要 |
-| [AWS Certified Developer - Associate](https://aws.amazon.com/jp/certification/certified-developer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | 開発者向けの認定ではあるが他の認定で出た問題とも重複することもありそこまでむずいと感じなかった |
-| [AWS Certified Data Engineer - Associate](https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | 前職で使っていたサービスの問題も多くそんなにむずいとは感じなかった |
+| [AWS Certified Developer - Associate](https://aws.amazon.com/jp/certification/certified-developer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | 開発者向けの認定ではあるが他の認定で出た問題とも重複することもありそこまで難しいと感じなかった |
+| [AWS Certified Data Engineer - Associate](https://aws.amazon.com/jp/certification/certified-data-engineer-associate/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | 前職で使っていたサービスの問題も多くそんなに難しいとは感じなかった |
 | [AWS Certified AI Practitioner](https://aws.amazon.com/jp/certification/certified-ai-practitioner/?ch=sec&sec=rmg&d=1) | ⭐️⭐️ | プロンプトエンジニアリングの手法などAWSに限らず勉強になった認定 |
 | [AWS Certified Cloud Practitioner](https://aws.amazon.com/jp/certification/certified-cloud-practitioner/?ch=sec&sec=rmg&d=1) | ⭐️ | ある程度、AWSを触ったことのある人であれば難しいとは感じないと思う。勉強時間ももっとも少なかった |
 
@@ -759,7 +759,7 @@ Machine Learning 系は少し特殊な立ち位置なので他の認定とは別
 #### 2. [CloudLicense | AWS WEB問題集で学習しよう](https://cloud-license.com/) に登録して問題を解く（もっともオススメ）
 
 有料ですが効率よく問題を解くことに特化しておりAWS認定全冠でもっとも貢献度の高いサービスでした。  
-大体、料金的には AWS認定の書籍を2冊購入した程度のものです。
+大体、料金的には AWS認定の書籍を2冊購入した程度の価格です。
 
 3ヶ月単位での契約になりベーシックとプロフェッショナルがありますが Associate の認定のみ取得を考えているならベーシックで大丈夫です。  
 Professional, Specialty も考えているならプロフェッショナルで登録する必要があります。
@@ -891,7 +891,7 @@ AWS認定を通じて必然的に学ぶ中で、これまで縁遠かった分�
 **「自分の言葉で説明できるまで理解する」習慣がついた**  
 単なる暗記ではなく、「人に説明できるか？」を基準に理解を深めていったことで、知識が実務に活きるようになった。
 
-**「やればできる」という自身が得られた**  
+**「やればできる」という自信が得られた**  
 体系的に学ぶことで理解が深まり、「やればちゃんと力になる」という認識に変わった。  
 
 ---
