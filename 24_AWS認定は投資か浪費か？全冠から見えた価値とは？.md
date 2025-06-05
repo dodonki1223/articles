@@ -780,6 +780,9 @@ Udemy では個人で模擬問題を提供しているケースがあります�
 #### 4. 試験ガイドを読み込ませて生成AIに問題を出してもらう
 
 [こちらの投稿](https://x.com/nasuvit_z/status/1828824115781984279) の内容です。  
+
+<blockquote class="twitter-tweet"><p lang="ja" dir="ltr">AWS Certified AI Practitioner (AI1-C01) と、AWS Certified Machine Learning Engineer - Associate (ME1-C01) に合格したので、対策と勉強法の紹介です。<br><br>これは、試験ガイドの通りで、生成AI (Amazon Bedrock) の知識だけで乗り切るのは不可能です。… <a href="https://t.co/rlqTksHxjF">pic.twitter.com/rlqTksHxjF</a></p>&mdash; nasuuu (@nasuvit_z) <a href="https://twitter.com/nasuvit_z/status/1828824115781984279?ref_src=twsrc%5Etfw">August 28, 2024</a></blockquote> <script async src="https://platform.twitter.com/widgets.js" charset="utf-8"></script>
+
 試験ガイドを ChatGPT などに読み込ませ、その後問題を出してもらう方法です。  
 これはまだ認定資格ができたばかりの時で情報が少ない時に有効です。
 
